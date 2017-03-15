@@ -16,9 +16,9 @@ jsonfile.readFile(file, function(err, obj) {
     json = obj;
 
     pubnub = new PubNub({
-        subscribeKey: json.controller.subKey,
-        publishKey: json.controller.pubKey,
-        secretKey: json.controller.secretKey,
+        subscribeKey: json.web_control.subKey,
+        publishKey: json.web_control.pubKey,
+        secretKey: json.web_control.secretKey,
         ssl: true
     });
 
@@ -31,7 +31,7 @@ jsonfile.readFile(file, function(err, obj) {
 
     initPubNub();
     initPubNubInstallation();
-    
+
 });
 
 function initApp(){
@@ -196,17 +196,17 @@ function globalControl(msg){
             //Statements executed when the result of expression matches valueN
             control_val = "sweep";
             break;
-        case 'sweep_interact':
+        case 'sweepinteract':
             //Statements executed when the result of expression matches valueN
-            control_val = "sweep_interact";
+            control_val = "sweepinteract";
             break;
         case 'noise':
             //Statements executed when the result of expression matches valueN
             control_val = "noise";
             break;
-        case 'noise_interact':
+        case 'noiseinteract':
             //Statements executed when the result of expression matches valueN
-            control_val = "noise_interact";
+            control_val = "noiseinteract";
             break;
         default:
             //Statements executed when none of the values match the value of the expression
@@ -254,17 +254,17 @@ function panelControl(msg){
             //Statements executed when the result of expression matches valueN
             control_val = "sweep";
             break;
-        case 'sweep_interact':
+        case 'sweepinteract':
             //Statements executed when the result of expression matches valueN
-            control_val = "sweep_interact";
+            control_val = "sweepinteract";
             break;
         case 'noise':
             //Statements executed when the result of expression matches valueN
             control_val = "noise";
             break;
-        case 'noise_interact':
+        case 'noiseinteract':
             //Statements executed when the result of expression matches valueN
-            control_val = "noise_interact";
+            control_val = "noiseinteract";
             break;
         default:
             //Statements executed when none of the values match the value of the expression
