@@ -1,0 +1,12 @@
+{
+    "controller": {
+        "pubKey": "KEY",
+        "subKey": "KEY",
+        "secretKey": "KEY"
+    },
+    "installation": {
+        "pubKey": "KEY",
+        "subKey": "KEY",
+        "secretKey": "KEY"
+    }
+}
