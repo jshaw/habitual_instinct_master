@@ -9,7 +9,7 @@ var sub;
 
 function preload() {
 
-    loadStrings('pubnub_config.txt', testFunction);
+    loadStrings('../pubnub_config.txt', testFunction);
 }
 
 // var FizzyText = function() {
