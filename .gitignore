@@ -1,5 +1,7 @@
 .DS_Store
 
+.pubnub_config.*
+
 # Logs
 logs
 *.log
