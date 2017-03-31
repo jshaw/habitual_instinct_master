@@ -49,28 +49,39 @@ function listPorts(){
         });
     });
 
-    // initPorts();
+    initPorts();
 
 }
 
 // ToDO, get actual port names for the arduinos that are going to be used
 // when plugged into port
 function initPorts(){
-    ports[0] = new SerialPort('/dev/tty-usbserial1', {
-        parser: SerialPort.parsers.readline('\n')
+    // ports[0] = new SerialPort('/dev/cu.usbmodem1411', {
+    ports[0] = new SerialPort('/dev/cu.usbmodem1421', {
+        parser: SerialPort.parsers.readline('\n'),
+        // parser: SerialPort.parsers.raw,
+        baudRate: 115200
     });
 
-    ports[1] = new SerialPort('/dev/tty-usbserial1', {
-        parser: SerialPort.parsers.readline('\n')
-    });
+    // ==============
 
-    ports[2] = new SerialPort('/dev/tty-usbserial1', {
-        parser: SerialPort.parsers.readline('\n')
-    });
+    // ports[1] = new SerialPort('/dev/cu.usbmodem14221', {
+    //     parser: SerialPort.parsers.readline('\n'),
+    //     // parser: SerialPort.parsers.raw,
+    //     baudRate: 115200
+    // });
 
-    ports[3] = new SerialPort('/dev/tty-usbserial1', {
-        parser: SerialPort.parsers.readline('\n')
-    });
+    // ports[2] = new SerialPort('/dev/cu.usbmodem14231', {
+    //     parser: SerialPort.parsers.readline('\n'),
+    //     // parser: SerialPort.parsers.raw,
+    //     baudRate: 115200
+    // });
+
+    // ==============
+
+    // ports[3] = new SerialPort('/dev/tty-usbserial1', {
+    //     parser: SerialPort.parsers.readline('\n')
+    // });
 
     initPortUpdates();
 
@@ -86,6 +97,7 @@ function initPortUpdates(){
             // it is here that the data will be sent from 
             // each microcontroller and it will need to be sent to Pubnub
             console.log('Data: ' + data);
+            publishInstallationData(data);
         });
     });
 }
@@ -109,8 +121,8 @@ function initPubNub(){
 
             var msg_str = msg.message;
             
-            console.log("------ ", msg_str);
-            console.log("------ ", msg_str.indexOf("_"));
+            // console.log("------ ", msg_str);
+            // console.log("------ ", msg_str.indexOf("_"));
 
             if(msg_str.indexOf("_") == -1){
                 // this means that it is a global control
@@ -152,7 +164,7 @@ function initPubNubInstallation(){
             var channelGroup = m.subscription; // The channel group or wildcard subscription match (if exists)
             var pubTT = m.timetoken; // Publish timetoken
             var msg = m.message; // The Payload
-            console.log("New Message", m);
+            console.log("New Installation Message", m);
           
         },
         presence: function(p) {
@@ -171,10 +183,31 @@ function initPubNubInstallation(){
         }
     });
 
-    pubnub.subscribe({
+    pubnub_installation.subscribe({
         channels: ['habitual_instinct_app'],
         withPresence: true // also subscribe to presence instances.
     });
+}
+
+function publishInstallationData(data){
+
+    pubnub_installation.publish({
+        // message: {
+        //     such: data
+        // },
+        message: data.trim(),
+        channel: 'habitual_instinct_app',
+        sendByPost: false, // true to send via post
+        storeInHistory: false, //override default storage options
+        meta: {
+            // "cool": "meta"
+        } // publish extra meta with the request
+    },
+    function (status, response) {
+        // handle status, response
+        console.log("response log: ", arguments);
+    });
+
 }
 
 function globalControl(msg){
@@ -219,14 +252,46 @@ function globalControl(msg){
     console.log("control_val", ports.length);
 
     if(ports.length > 0){
+        console.log("do we get here?");
 
         _.forEach(ports, function(value, key){
-            ports[key].on('data', function (data) {
-                // it is here that the data will be sent from 
-                // each microcontroller and it will need to be sent to Pubnub
-                console.log('Data: ' + data);
-                ports[panel].write(control_val);
-            });
+            // ports[key].on('data', function (data) {
+            //     // it is here that the data will be sent from 
+            //     // each microcontroller and it will need to be sent to Pubnub
+            //     console.log('Data: ' + data);
+            //     // ports[panel].write(control_val);
+
+            //     // if(control_val == 'start'){
+            //     //     ports[key].write(103);
+            //     // } else if (control_val == 'stop'){
+            //     //     ports[key].write(115);
+            //     // }
+
+            // });
+
+            // console.log("value: ", value);
+            console.log("key: ", key);
+
+            if(control_val == 'start'){
+                console.log("START");
+                // ports[key].write(new Buffer(103), function () {
+                ports[key].write(new Buffer('g'), function () {
+                    ports[key].drain(function(){
+                        console.log("start args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'stop'){
+                console.log("Stop");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('s'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            }
+
         });
     }
 }
@@ -237,7 +302,7 @@ function panelControl(msg){
     var behaviour = split[0];
     var panel_str = split[1];
 
-    switch (msg) {
+    switch (behaviour) {
         case 'start':
             //Statements executed when the result of expression matches value1
             control_val = "start";
@@ -279,6 +344,22 @@ function panelControl(msg){
     console.log(panel);
 
     ports[panel].write(control_val);
+
+    if(control_val == 'start'){
+        console.log("START");
+        ports[panel].write(new Buffer("g"), function () {
+            ports[panel].drain(function(){
+                console.log("start args: ", arguments);
+            });
+        });
+    } else if (control_val == 'stop'){
+        console.log("Stop");
+        ports[panel].write(new Buffer("s"), function () {
+            ports[panel].drain(function(){
+                console.log("stop args: ", arguments);
+            });
+        });
+    }
     // ports[panel].write(new Buffer(control_val));
 }
 
