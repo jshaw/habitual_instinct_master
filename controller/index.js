@@ -124,7 +124,7 @@ function initPubNub(){
             // console.log("------ ", msg_str);
             // console.log("------ ", msg_str.indexOf("_"));
 
-            if(msg_str.indexOf("_") == -1){
+            if(msg_str.indexOf("__") == -1){
                 // this means that it is a global control
                 // global control
                 globalControl(msg_str);
@@ -212,6 +212,12 @@ function publishInstallationData(data){
 
 function globalControl(msg){
     var control_val;
+
+    console.log("=================================");
+    console.log("control_val: ", control_val);
+    // reset_with_pause
+    console.log("=================================");
+
     switch (msg) {
         case 'start':
             //Statements executed when the result of expression matches value1
@@ -245,6 +251,7 @@ function globalControl(msg){
             //Statements executed when none of the values match the value of the expression
             console.log("Default");
             // nothing sends....
+            control_val = msg;
             break;
     }
 
@@ -272,6 +279,14 @@ function globalControl(msg){
             // console.log("value: ", value);
             console.log("key: ", key);
 
+            // TODO, create a key look up table for the term to the single key for 
+            // TODO, create a key look up table for the term to the single key for 
+            // TODO, create a key look up table for the term to the single key for 
+            // TODO, create a key look up table for the term to the single key for 
+            // TODO, create a key look up table for the term to the single key for 
+            // TODO, create a key look up table for the term to the single key for 
+            // =========================================
+
             if(control_val == 'start'){
                 console.log("START");
                 // ports[key].write(new Buffer(103), function () {
@@ -288,6 +303,126 @@ function globalControl(msg){
                     
                     ports[key].drain(function(){
                         console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'next'){
+                console.log("Next");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('n'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("next args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'previous'){
+                console.log("Previous");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('p'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'configure'){
+                console.log("Configure");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('c'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'sweep'){
+                console.log("Sweep");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('1'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'sweep_react'){
+                console.log("sweep_react");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('2'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("sweep_react args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'sweep_react_pause'){
+                console.log("sweep_react_pause");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('3'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("sweep_react_pause args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'noise'){
+                console.log("noise");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('4'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("noise args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'noise_react'){
+                console.log("Noise React");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('5'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("noise react pause args: ", arguments);
+                    });
+                });
+            // } else if (control_val == 'stop'){
+            //     console.log("Stop");
+            //     // ports[key].write(new Buffer(115), function () {
+            //     // ports[key].write(115, function () {
+            //     ports[key].write(new Buffer('s'), function () {
+                    
+            //         ports[key].drain(function(){
+            //             console.log("stop args: ", arguments);
+            //         });
+            //     });
+            } else if (control_val == 'pattern_wave_small_v2'){
+                console.log("pattern_wave_small_v2");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('6'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'reset'){
+                console.log("reset");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('-'), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("stop args: ", arguments);
+                    });
+                });
+            } else if (control_val == 'reset_with_pause'){
+                console.log("reset_with_pause");
+                // ports[key].write(new Buffer(115), function () {
+                // ports[key].write(115, function () {
+                ports[key].write(new Buffer('='), function () {
+                    
+                    ports[key].drain(function(){
+                        console.log("reset_with_pause args: ", arguments);
                     });
                 });
             }
@@ -343,7 +478,7 @@ function panelControl(msg){
 
     console.log(panel);
 
-    ports[panel].write(control_val);
+    // ports[panel].write(control_val);
 
     if(control_val == 'start'){
         console.log("START");
