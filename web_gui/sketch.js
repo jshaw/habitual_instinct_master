@@ -12,33 +12,6 @@ function preload() {
     loadStrings('../pubnub_config.txt', testFunction);
 }
 
-// var FizzyText = function() {
-//     this.message = 'dat.gui';
-//     this.speed = 0.8;
-//     this.displayOutline = false;
-//     this.explode = function() { 
-//         console.log("something here");
-//     };
-// };
-
-// var FizzyText = function() {
-//   this.message = 'dat.gui';
-//   this.speed = 0.8;
-//   this.displayOutline = false;
-//   this.explode = function() { ... };
-//   // Define render logic ...
-// };
-
-// window.onload = function() {
-//   var text = new FizzyText();
-//   var gui = new dat.GUI();
-//   gui.add(text, 'message');
-//   gui.add(text, 'speed', -5, 5);
-//   gui.add(text, 'displayOutline');
-//   gui.add(text, 'explode');
-// };
-
-
 function setup() { 
     createCanvas(400, 400);
 
@@ -46,18 +19,15 @@ function setup() {
     texts = new Text();
     controls = new Control();
     var gui = new dat.GUI({width:520});
-    // gui.add(colors, 'g', 0, 255);
-    // gui.add(texts, 'explode');
 
+
+    // TODO
+    // Write this so it's not redundent... 
+    // loop through folder and folder items 
     var f0 = gui.addFolder("Global");
     f0.add(controls, 'randomize');
     f0.add(controls, 'start');
     f0.add(controls, 'stop');
-    // f0.add(controls, 'wave');
-    // f0.add(controls, 'sweep');
-    // f0.add(controls, 'sweepinteract');
-    // f0.add(controls, 'noise');
-    // f0.add(controls, 'noiseinteract');
     f0.add(controls, 'next');
     f0.add(controls, 'previous');
     f0.add(controls, 'configure');
@@ -70,51 +40,66 @@ function setup() {
     f0.add(controls, 'reset');
     f0.add(controls, 'reset_with_pause');
 
-    var f1 = gui.addFolder("Arduino One");
-    // f0.add(colors, 'g', 0, 255);
-    // f0.add(texts, 'explode');
+    // Commented out for reference
+    // perhaps latter
+    // f0.add(controls, 'wave');
+    // f0.add(controls, 'sweep');
+    // f0.add(controls, 'sweepinteract');
+    // f0.add(controls, 'noise');
+    // f0.add(controls, 'noiseinteract');
 
-    f1.add(controls, 'start' + '_f0');
-    f1.add(controls, 'stop' + '_f0');
-    f1.add(controls, 'wave' + '_f0');
-    f1.add(controls, 'sweep' + '_f0');
-    f1.add(controls, 'sweepinteract' + '_f0');
-    f1.add(controls, 'noise' + '_f0');
-    f1.add(controls, 'noiseinteract' + '_f0');
+    var f1 = gui.addFolder("Arduino One");
+
+    f1.add(controls, 'start' + '__f0');
+    f1.add(controls, 'stop' + '__f0');
+    f1.add(controls, 'measure' + '__f0');
+    f1.add(controls, 'measure_react' + '__f0');
+    f1.add(controls, 'sweep' + '__f0');
+    f1.add(controls, 'sweep_react' + '__f0');
+    f1.add(controls, 'noise' + '__f0');
+    f1.add(controls, 'noise_react' + '__f0');
+    f1.add(controls, 'pattern_wave_small_v2' + '__f0');
+    f1.add(controls, 'reset' + '__f0');
+    f1.add(controls, 'reset_with_pause' + '__f0');
 
     var f2 = gui.addFolder("Arduino Two");
-    // f2.add(colors, 'g', 0, 255);
-    // f2.add(texts, 'explode');
-
-    f2.add(controls, 'start' + '_f1');
-    f2.add(controls, 'stop' + '_f1');
-    f2.add(controls, 'wave' + '_f1');
-    f2.add(controls, 'sweep' + '_f1');
-    f2.add(controls, 'sweepinteract' + '_f1');
-    f2.add(controls, 'noise' + '_f1');
-    f2.add(controls, 'noiseinteract' + '_f1');
+    
+    f2.add(controls, 'start' + '__f1');
+    f2.add(controls, 'stop' + '__f1');
+    f2.add(controls, 'sweep' + '__f1');
+    f2.add(controls, 'sweep_react' + '__f1');
+    f2.add(controls, 'noise' + '__f1');
+    f2.add(controls, 'noise_react' + '__f1');
+    f2.add(controls, 'pattern_wave_small_v2' + '__f1');
+    f2.add(controls, 'reset' + '__f1');
+    f2.add(controls, 'reset_with_pause' + '__f1');
 
     var f3 = gui.addFolder("Arduino Three");
-    f3.add(controls, 'start' + '_f2');
-    f3.add(controls, 'stop' + '_f2');
-    f3.add(controls, 'wave' + '_f2');
-    f3.add(controls, 'sweep' + '_f2');
-    f3.add(controls, 'sweepinteract' + '_f2');
-    f3.add(controls, 'noise' + '_f2');
-    f3.add(controls, 'noiseinteract' + '_f2');
+    
+    f3.add(controls, 'start' + '__f2');
+    f3.add(controls, 'stop' + '__f2');
+    f3.add(controls, 'sweep' + '__f2');
+    f3.add(controls, 'sweep_react' + '__f2');
+    f3.add(controls, 'noise' + '__f2');
+    f3.add(controls, 'noise_react' + '__f2');
+    f3.add(controls, 'pattern_wave_small_v2' + '__f2');
+    f3.add(controls, 'reset' + '__f2');
+    f3.add(controls, 'reset_with_pause' + '__f2');
 
     var f4 = gui.addFolder("Arduino Four");
-    f4.add(controls, 'start' + '_f3');
-    f4.add(controls, 'stop' + '_f3');
-    f4.add(controls, 'wave' + '_f3');
-    f4.add(controls, 'sweep' + '_f3');
-    f4.add(controls, 'sweepinteract' + '_f3');
-    f4.add(controls, 'noise' + '_f3');
-    f4.add(controls, 'noiseinteract' + '_f3');
+    
+    f4.add(controls, 'start' + '__f3');
+    f4.add(controls, 'stop' + '__f3');
+    f4.add(controls, 'sweep' + '__f3');
+    f4.add(controls, 'sweep_react' + '__f3');
+    f4.add(controls, 'noise' + '__f3');
+    f4.add(controls, 'noise_react' + '__f3');
+    f3.add(controls, 'pattern_wave_small_v2' + '__f3');
+    f4.add(controls, 'reset' + '__f3');
+    f4.add(controls, 'reset_with_pause' + '__f3');
 
-
-    f0.open();
-    // f1.open();
+    // f0.open();
+    f1.open();
 
 } 
 
@@ -302,328 +287,478 @@ function Control() {
 
     // ========================
     // ========================
-    // ========================
-    // ========================
-    // ========================
-    // ========================
-    // ========================
 
     // need to refactor after here
-
-    this.start_f0 = function(){
-        console.log("start_f0");
+    // Panel 1
+    this.start__f0 = function(){
+        console.log("start__f0");
 
         publishConfig.message = {
-            message : "start_f0"
+            message : "start__f0"
         };
 
         this.publish();
     }
 
-    this.start_f1 = function(){
+    this.stop__f0 = function(){
+        console.log("stop__f0");
 
         publishConfig.message = {
-            message : "start_f1"
+            message : "stop__f0"
         };
 
         this.publish();
     }
 
-    this.start_f2 = function(){
+    // this.configure = function(){
+    //     console.log("configure");
+    //     console.log(arguments);
+
+    //     publishConfig.message = {
+    //         message : "configure"
+    //     };
+
+    //     this.publish();
+    // }
+
+    this.sweep__f0 = function(){
+        console.log("sweep__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "start_f2"
+            message : "sweep__f0"
         };
 
         this.publish();
     }
 
-    this.start_f3 = function(){
+    this.measure__f0 = function(){
+        console.log("measure__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "start_f3"
+            message : "measure__f0"
         };
 
         this.publish();
     }
 
-    this.stop = function(){
-        console.log("stop");
+    this.measure_react__f0 = function(){
+        console.log("measure_react");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "stop"
+            message : "measure_react__f0"
         };
 
         this.publish();
     }
 
-    this.stop_f0 = function(){
-        console.log("stop_f0");
+    this.sweep_react__f0 = function(){
+        console.log("sweep_react__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "stop_f0"
+            message : "sweep_react__f0"
         };
 
         this.publish();
     }
 
-    this.stop_f1 = function(){
+    this.sweep_react_pause__f0 = function(){
+        console.log("sweep_react_pause__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "stop_f1"
+            message : "sweep_react_pause__f0"
         };
 
         this.publish();
     }
 
-    this.stop_f2 = function(){
+    this.noise__f0 = function(){
+        console.log("noise__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "stop_f2"
+            message : "noise__f0"
         };
 
         this.publish();
     }
 
-    this.stop_f3 = function(){
+    this.noise_react__f0 = function(){
+        console.log("noise_react__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "stop_f3"
+            message : "noise_react__f0"
         };
 
         this.publish();
     }
 
-    this.wave = function(){
-        console.log("wave");
+    this.pattern_wave_small_v2__f0 = function(){
+        console.log("pattern_wave_small_v2__f0");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "wave"
+            message : "pattern_wave_small_v2__f0"
         };
 
         this.publish();
     }
 
-    this.wave_f0 = function(){
-        console.log("wave_f0");
+    this.reset__f0 = function(){
+        console.log("reset");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "wave_f0"
+            message : "reset__f0"
         };
 
         this.publish();
     }
 
-    this.wave_f1 = function(){
+    this.reset_with_pause__f0 = function(){
+        console.log("reset_with_pause");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "wave_f1"
+            message : "reset_with_pause__f0"
         };
 
         this.publish();
     }
 
-    this.wave_f2 = function(){
+
+    // panel 2
+    // ============================
+    this.start__f1 = function(){
+        console.log("start__f1");
 
         publishConfig.message = {
-            message : "wave_f2"
+            message : "start__f1"
         };
 
         this.publish();
     }
 
-    this.wave_f3 = function(){
+    this.stop__f1 = function(){
+        console.log("stop__f1");
 
         publishConfig.message = {
-            message : "wave_f3"
+            message : "stop__f1"
         };
 
         this.publish();
     }
 
-    this.sweep = function(){
-        console.log("sweep");
+    this.sweep__f1 = function(){
+        console.log("sweep__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweep"
+            message : "sweep__f1"
         };
 
         this.publish();
     }
 
-    this.sweep_f0 = function(){
-        console.log("sweep_f0");
+    this.sweep_react__f1 = function(){
+        console.log("sweep_react__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweep_f0"
+            message : "sweep_react__f1"
         };
 
         this.publish();
     }
 
-    this.sweep_f1 = function(){
+    this.sweep_react_pause__f1 = function(){
+        console.log("sweep_react_pause__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweep_f1"
+            message : "sweep_react_pause__f1"
         };
 
         this.publish();
     }
 
-    this.sweep_f2 = function(){
+    this.noise__f1 = function(){
+        console.log("noise__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweep_f2"
+            message : "noise__f1"
         };
 
         this.publish();
     }
 
-    this.sweep_f3 = function(){
+    this.noise_react__f1 = function(){
+        console.log("noise_react__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweep_f3"
+            message : "noise_react__f1"
         };
 
         this.publish();
     }
 
-    this.sweepinteract = function(){
-        console.log("sweepinteract");
+    this.pattern_wave_small_v2__f1 = function(){
+        console.log("pattern_wave_small_v2__f1");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweepinteract"
+            message : "pattern_wave_small_v2__f1"
         };
 
         this.publish();
     }
 
-    this.sweepinteract_f0 = function(){
-        console.log("sweepinteract_f0");
+    this.reset__f1 = function(){
+        console.log("reset");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweepinteract_f0"
+            message : "reset__f1"
         };
 
         this.publish();
     }
 
-    this.sweepinteract_f1 = function(){
+    this.reset_with_pause__f1 = function(){
+        console.log("reset_with_pause");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "sweepinteract_f1"
+            message : "reset_with_pause__f1"
         };
 
         this.publish();
     }
 
-    this.sweepinteract_f2 = function(){
+
+    // panel 3
+    // ==================
+    this.start__f2 = function(){
+        console.log("start__f2");
 
         publishConfig.message = {
-            message : "sweepinteract_f2"
+            message : "start__f2"
         };
 
         this.publish();
     }
 
-    this.sweepinteract_f3 = function(){
+    this.stop__f2 = function(){
+        console.log("stop__f2");
 
         publishConfig.message = {
-            message : "sweepinteract_f3"
+            message : "stop__f2"
         };
 
         this.publish();
     }
 
-    this.noise = function(){
-        console.log("noise");
+    this.sweep__f2 = function(){
+        console.log("sweep__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noise"
+            message : "sweep__f2"
         };
 
         this.publish();
     }
 
-    this.noise_f0 = function(){
-        console.log("noise_f0");
+    this.sweep_react__f2 = function(){
+        console.log("sweep_react__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noise_f0"
-        };
-
-        this.publish();
-    }
-    
-    this.noise_f1 = function(){
-
-        publishConfig.message = {
-            message : "noise_f1"
+            message : "sweep_react__f2"
         };
 
         this.publish();
     }
 
-    this.noise_f2 = function(){
+    this.sweep_react_pause__f2 = function(){
+        console.log("sweep_react_pause__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noise_f2"
+            message : "sweep_react_pause__f2"
         };
 
         this.publish();
     }
 
-    this.noise_f3 = function(){
+    this.noise__f2 = function(){
+        console.log("noise__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noise_f3"
+            message : "noise__f2"
         };
 
         this.publish();
     }
 
-    this.noiseinteract = function(){
-        console.log("noiseinteract");
+    this.noise_react__f2 = function(){
+        console.log("noise_react__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noiseinteract"
+            message : "noise_react__f2"
         };
 
         this.publish();
     }
 
-    this.noiseinteract_f0 = function(){
-        console.log("noiseinteract");
+    this.pattern_wave_small_v2__f2 = function(){
+        console.log("pattern_wave_small_v2__f2");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noiseinteract_f0"
+            message : "pattern_wave_small_v2__f2"
         };
 
         this.publish();
     }
 
-    this.noiseinteract_f1 = function(){
+    this.reset__f2 = function(){
+        console.log("reset");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noiseinteract_f1"
+            message : "reset__f2"
         };
 
         this.publish();
     }
 
-    this.noiseinteract_f2 = function(){
+    this.reset_with_pause__f2 = function(){
+        console.log("reset_with_pause");
+        console.log(arguments);
 
         publishConfig.message = {
-            message : "noiseinteract_f2"
+            message : "reset_with_pause__f2"
         };
 
         this.publish();
     }
 
-    this.noiseinteract_f3 = function(){
+
+    // panel 4
+    // ==================
+    this.start__f3 = function(){
+        console.log("start__f3");
 
         publishConfig.message = {
-            message : "noiseinteract_f3"
+            message : "start__f3"
+        };
+
+        this.publish();
+    }
+
+    this.stop__f3 = function(){
+        console.log("stop__f3");
+
+        publishConfig.message = {
+            message : "stop__f3"
+        };
+
+        this.publish();
+    }
+
+    this.sweep__f3 = function(){
+        console.log("sweep__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "sweep__f3"
+        };
+
+        this.publish();
+    }
+
+    this.sweep_react__f3 = function(){
+        console.log("sweep_react__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "sweep_react__f3"
+        };
+
+        this.publish();
+    }
+
+    this.sweep_react_pause__f3 = function(){
+        console.log("sweep_react_pause__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "sweep_react_pause__f3"
+        };
+
+        this.publish();
+    }
+
+    this.noise__f3 = function(){
+        console.log("noise__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "noise__f3"
+        };
+
+        this.publish();
+    }
+
+    this.noise_react__f3 = function(){
+        console.log("noise_react__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "noise_react__f3"
+        };
+
+        this.publish();
+    }
+
+    this.pattern_wave_small_v2__f3 = function(){
+        console.log("pattern_wave_small_v2__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "pattern_wave_small_v2__f3"
+        };
+
+        this.publish();
+    }
+
+    this.reset__f3 = function(){
+        console.log("reset");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "reset__f3"
+        };
+
+        this.publish();
+    }
+
+    this.reset_with_pause__f3 = function(){
+        console.log("reset_with_pause");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "reset_with_pause__f3"
         };
 
         this.publish();
