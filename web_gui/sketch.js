@@ -24,8 +24,11 @@ function setup() {
     // TODO
     // Write this so it's not redundent... 
     // loop through folder and folder items 
+    var f = gui.addFolder("Ransomize");
+    f.add(controls, 'randomize');
+
     var f0 = gui.addFolder("Global");
-    f0.add(controls, 'randomize');
+    // f0.add(controls, 'randomize');
     f0.add(controls, 'start');
     f0.add(controls, 'stop');
     f0.add(controls, 'next');
@@ -98,13 +101,100 @@ function setup() {
     f4.add(controls, 'reset' + '__f3');
     f4.add(controls, 'reset_with_pause' + '__f3');
 
-    // f0.open();
+    f.open();
     f1.open();
 
 } 
 
+
+var random_mode = false;
+
+var millis_mode_timer = 0;
+var current_millis = 0;
+var randomize_last_autoreset = 0;
+// var randomize_interval = 10000;
+// var randomize_pause_interval = 1000;
+
+// var randomize_interval = 30000;
+// var randomize_pause_interval = 10000;
+
+
+///////
+var lastAutoRest = 0;
+// var lastAutoRestDelay = 60000;
+var lastAutoRestDelay = 30000;
+
+// ideal would be run for 900000 (15 min)
+// rest for 30000 (30 seconds)
+// var lastAutoRestDelayShort = 60000;
+var lastAutoRestDelayShort = 10000;
+// 10 mins
+// var lastAutoRestDelayLong = 600000;
+var lastAutoRestDelayLong = 30000;
+// 15 mins
+//long lastAutoRestDelayLong = 900000;
+
+var function_control_list = ['sweep', 'sweep_react', 'sweep_react_pause', 'noise', 'noise_react', 'pattern_wave_small_v2'];
+
+
 function draw() { 
     background(colors.r, colors.g, colors.b);
+
+    random_mode = controls.randomize;
+    console.log("random_mode: ", random_mode);
+
+    current_millis = millis();
+
+    if(random_mode ==  true){
+        console.log("random mode is active");
+        if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
+            lastAutoRest = millis();
+            console.log("0");
+            if(lastAutoRestDelay == lastAutoRestDelayShort){
+                console.log("1");
+                lastAutoRestDelay = lastAutoRestDelayLong;
+                // var tmp_random_val = random(0, function_control_list.length);
+                // var method_name = function_control_list[tmp_random_val]
+                var method_name = 'sweep';
+                // TODO
+                // NEED TO EXECUTE A DYNAMICALLY / PROGROMATICALLY FUNCTION NAME
+                // http://stackoverflow.com/questions/969743/how-do-i-call-a-dynamically-named-method-in-javascript
+                // http://stackoverflow.com/questions/5905492/dynamic-function-name-in-javascript
+                // controls[method_name];
+                controls.sweep();
+                
+                // buttonPushCounter  = tmp_random_val;
+            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+                console.log("3");
+                lastAutoRestDelay = lastAutoRestDelayShort;
+                controls.stop();
+            }
+        }
+    }
+
+
+
+    // if ((millis() - lastAutoRest) > randomize_last_autoreset) {
+    //     millis_mode_timer = millis();
+
+    //     if(randomize_last_autoreset == randomize_interval){
+    //         lastAutoRestDelay = lastAutoRestDelayLong;
+    //         // random select some global mode from array
+    //         var tmp_random_val = random(1,4);
+    //         buttonPushCounter  = tmp_random_val;
+    //     } else if(randomize_last_autoreset == randomize_pause_interval){
+    //         lastAutoRestDelay = lastAutoRestDelayShort;
+    //         // pause the installation
+    //         controls.stop();
+            
+
+    //     }
+    // }
+
+    
+
+
+
 }
 
 function testFunction(str) {
@@ -147,8 +237,7 @@ function Control() {
         console.log(arguments);
 
         publishConfig.message = {
-            message : "start",
-            randomize: this.randomize
+            message : "start"
         };
 
         this.publish();
