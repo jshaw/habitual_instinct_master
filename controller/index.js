@@ -108,6 +108,24 @@ function initPortUpdates(){
     });
 }
 
+
+
+// #### TODO;
+// check the arguments that are passed in here
+// ==========================
+function resetSerialPorts(){
+    _.forEach(ports, function(value, key){
+        ports[key].flush(function(){
+            // check the arguments that are passed in here
+            ports[key].close();
+        });
+    });
+
+    initPortUpdates();
+
+}
+
+
 function initPubNub(){
 
     pubnub.addListener({
@@ -120,7 +138,12 @@ function initPubNub(){
             var msg = m.message; // The Payload
             var msg_str = msg.message;
 
-            if(msg_str.indexOf("__") == -1){
+
+            if(msg_str == "reset_serial_ports"){
+
+                resetSerialPorts();
+
+            } else if(msg_str.indexOf("__") == -1){
                 // this means that it is a global control
                 // global control
                 globalControl(msg_str);
@@ -434,9 +457,9 @@ function panelControl(msg){
             //Statements executed when the result of expression matches valueN
             control_val = "sweep_react";
             break;
-        case 'reset_with_pause':
+        case 'sweep_react_pause':
             //Statements executed when the result of expression matches valueN
-            control_val = "reset_with_pause";
+            control_val = "sweep_react_pause";
             break;
         case 'noise':
             //Statements executed when the result of expression matches valueN
