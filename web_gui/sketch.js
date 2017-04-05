@@ -20,20 +20,22 @@ function setup() {
     controls = new Control();
     var gui = new dat.GUI({width:520});
 
-
     // TODO
     // Write this so it's not redundent... 
     // loop through folder and folder items 
     var f = gui.addFolder("Ransomize");
     f.add(controls, 'randomize');
+    // f.add(controls, 'close_ports');
+    // f.add(controls, 'init_ports');
+    f.add(controls, 'reset_serial_ports');
 
     var f0 = gui.addFolder("Global");
     // f0.add(controls, 'randomize');
     f0.add(controls, 'start');
     f0.add(controls, 'stop');
-    f0.add(controls, 'next');
-    f0.add(controls, 'previous');
-    f0.add(controls, 'configure');
+    // f0.add(controls, 'next');
+    // f0.add(controls, 'previous');
+    // f0.add(controls, 'configure');
     f0.add(controls, 'sweep');
     f0.add(controls, 'sweep_react');
     f0.add(controls, 'sweep_react_pause');
@@ -59,6 +61,7 @@ function setup() {
     f1.add(controls, 'measure_react' + '__f0');
     f1.add(controls, 'sweep' + '__f0');
     f1.add(controls, 'sweep_react' + '__f0');
+    f1.add(controls, 'sweep_react_pause' + '__f0');
     f1.add(controls, 'noise' + '__f0');
     f1.add(controls, 'noise_react' + '__f0');
     f1.add(controls, 'pattern_wave_small_v2' + '__f0');
@@ -71,6 +74,7 @@ function setup() {
     f2.add(controls, 'stop' + '__f1');
     f2.add(controls, 'sweep' + '__f1');
     f2.add(controls, 'sweep_react' + '__f1');
+    f2.add(controls, 'sweep_react_pause' + '__f1');
     f2.add(controls, 'noise' + '__f1');
     f2.add(controls, 'noise_react' + '__f1');
     f2.add(controls, 'pattern_wave_small_v2' + '__f1');
@@ -83,6 +87,7 @@ function setup() {
     f3.add(controls, 'stop' + '__f2');
     f3.add(controls, 'sweep' + '__f2');
     f3.add(controls, 'sweep_react' + '__f2');
+    f3.add(controls, 'sweep_react_pause' + '__f2');
     f3.add(controls, 'noise' + '__f2');
     f3.add(controls, 'noise_react' + '__f2');
     f3.add(controls, 'pattern_wave_small_v2' + '__f2');
@@ -95,6 +100,7 @@ function setup() {
     f4.add(controls, 'stop' + '__f3');
     f4.add(controls, 'sweep' + '__f3');
     f4.add(controls, 'sweep_react' + '__f3');
+    f4.add(controls, 'sweep_react_pause' + '__f3');
     f4.add(controls, 'noise' + '__f3');
     f4.add(controls, 'noise_react' + '__f3');
     f3.add(controls, 'pattern_wave_small_v2' + '__f3');
@@ -102,7 +108,7 @@ function setup() {
     f4.add(controls, 'reset_with_pause' + '__f3');
 
     f.open();
-    f1.open();
+    f2.open();
 
 } 
 
@@ -141,7 +147,6 @@ function draw() {
     background(colors.r, colors.g, colors.b);
 
     random_mode = controls.randomize;
-    console.log("random_mode: ", random_mode);
 
     current_millis = millis();
 
@@ -171,29 +176,6 @@ function draw() {
             }
         }
     }
-
-
-
-    // if ((millis() - lastAutoRest) > randomize_last_autoreset) {
-    //     millis_mode_timer = millis();
-
-    //     if(randomize_last_autoreset == randomize_interval){
-    //         lastAutoRestDelay = lastAutoRestDelayLong;
-    //         // random select some global mode from array
-    //         var tmp_random_val = random(1,4);
-    //         buttonPushCounter  = tmp_random_val;
-    //     } else if(randomize_last_autoreset == randomize_pause_interval){
-    //         lastAutoRestDelay = lastAutoRestDelayShort;
-    //         // pause the installation
-    //         controls.stop();
-            
-
-    //     }
-    // }
-
-    
-
-
 
 }
 
@@ -231,6 +213,21 @@ function Control() {
     };
 
     this.randomize = false;
+
+    this.reset_serial_ports = (function(){
+        console.log("reset_serial_ports");
+        publishConfig.message = {
+            message : "reset_serial_ports"
+        };
+    });
+
+    // this.close_ports = (function(){
+    //     console.log("close_ports");
+    // });
+
+    // this.init_ports = (function(){
+    //     console.log("init_ports");
+    // });
 
     this.start = function(){
         console.log("start");
