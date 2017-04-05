@@ -181,6 +181,8 @@ function Control() {
         publishConfig.message = {
             message : "reset_serial_ports"
         };
+
+        this.publish();
     });
 
     // this.close_ports = (function(){

@@ -107,19 +107,32 @@ function initPortUpdates(){
 
 
 
-// #### TODO;
-// check the arguments that are passed in here
+// Resets the serial ports by closing them, then reopening them
 // ==========================
 function resetSerialPorts(){
-    _.forEach(ports, function(value, key){
-        ports[key].flush(function(){
-            // check the arguments that are passed in here
-            ports[key].close();
-        });
+    var closePromise = new Promise((resolve, reject) => { 
+        _.forEach(ports, function(value, key){
+            ports[key].flush(function(){
+                // console.log("close port: " + key);
+                // console.log("close port value: " + value);
+                // check the arguments that are passed in here
+                ports[key].close();
+
+                // on the last loop, resolve the promise,
+                // this will cause all the serial ports to re-initiate.
+                if(key == (ports.length-1)){
+                    resolve("Success!");
+                }
+            });
+        })
     });
 
-    initPortUpdates();
+    closePromise.then(function(msg){
 
+        // once all of the ports are closed, reopen them
+        initPorts();
+
+    });
 }
 
 
@@ -137,7 +150,7 @@ function initPubNub(){
 
 
             if(msg_str == "reset_serial_ports"){
-
+                // console.log('reset_serial_ports');
                 resetSerialPorts();
 
             } else if(msg_str.indexOf("__") == -1){
