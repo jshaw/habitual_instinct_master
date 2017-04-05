@@ -10,6 +10,21 @@ var json
 
 var ports = [];
 
+var modeToKeyMap = {
+    'start': 'g',
+    'stop': 's',
+    'sweep': '1',
+    'sweep_react': '2',
+    'sweep_react_pause': '3',
+    'noise': '4',
+    'noise_react': '5',
+    'pattern_wave_small_v2': '6',
+    'measure': '7',
+    'measure_react': '8',
+    'reset': '-',
+    'reset_with_pause': '='
+};
+
 jsonfile.readFile(file, function(err, obj) {
     console.dir(obj);
     json = obj;
@@ -59,40 +74,22 @@ function listPorts(){
 // ==========
 
 var portsLookup = [14111, 14121, 14131];
+var globalBaudRate = 115200;
 // var portsLookup = [14111, 14121, 14131, 14141];
 
 function initPorts(){
-    // ports[0] = new SerialPort('/dev/cu.usbmodem1411', {
-    ports[0] = new SerialPort('/dev/cu.usbmodem14111', {
-    // ports[0] = new SerialPort('/dev/cu.usbmodem1421', {
-        parser: SerialPort.parsers.readline('\n'),
-        baudRate: 115200
+
+    _.forEach(portsLookup, function(value, key){
+        var serialPortConnect = '/dev/cu.usbmodem' + value;
+        ports[key] = new SerialPort(serialPortConnect, {
+            parser: SerialPort.parsers.readline('\n'),
+            baudRate: globalBaudRate
+        });
     });
-
-    // ==============
-
-    // ports[1] = new SerialPort('/dev/cu.usbmodem14221', {
-    ports[1] = new SerialPort('/dev/cu.usbmodem14121', {
-        parser: SerialPort.parsers.readline('\n'),
-        baudRate: 115200
-    });
-
-    // ports[2] = new SerialPort('/dev/cu.usbmodem14231', {
-    ports[2] = new SerialPort('/dev/cu.usbmodem14131', {
-        parser: SerialPort.parsers.readline('\n'),
-        baudRate: 115200
-    });
-
-    // ==============
-
-    // ports[3] = new SerialPort('/dev/tty-usbserial1', {
-    //     parser: SerialPort.parsers.readline('\n')
-    // });
 
     initPortUpdates();
 
 }
-
 
 // as a reminder, it might make sense to have these ports as another pupnub instance.
 // this way there's two listenier for incomming data and ougoing control of the arduinos / microcontrolers
@@ -234,54 +231,9 @@ function globalControl(msg){
     console.log("control_val: ", control_val);
     console.log("=================================");
 
-    switch (msg) {
-        case 'start':
-            //Statements executed when the result of expression matches value1
-            control_val = "start";
-            break;
-        case 'stop':
-            //Statements executed when the result of expression matches value2
-            control_val = "stop";
-            break;
-        case 'sweep':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep";
-            break;
-        case 'sweep_react':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep_react";
-            break;
-        case 'sweep_react_pause':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep_react_pause";
-            break;
-        case 'noise':
-            //Statements executed when the result of expression matches valueN
-            control_val = "noise";
-            break;
-        case 'noise_react':
-            //Statements executed when the result of expression matches valueN
-            control_val = "noise_react";
-            break;
-        case 'pattern_wave_small':
-            //Statements executed when the result of expression matches valueN
-            control_val = "pattern_wave_small";
-            break;
-        case 'reset':
-            //Statements executed when the result of expression matches valueN
-            control_val = "reset";
-            break;
-        case 'reset_with_pause':
-            //Statements executed when the result of expression matches valueN
-            control_val = "reset_with_pause";
-            break;
-        default:
-            //Statements executed when none of the values match the value of the expression
-            console.log("Default");
-            // nothing sends....
-            control_val = msg;
-            break;
-    }
+    // assign the passed in message to the control val
+    // this will use the loopup table to reference correct key control to pass via serial
+    control_val = msg;
 
     console.log("control_val", control_val);
     console.log("ports", ports.length);
@@ -308,110 +260,14 @@ function globalControl(msg){
             // to be duplicated over and over and over... :/
             // =========================================
 
-            if(control_val == 'start'){
-                console.log("START");
-                ports[key].write(new Buffer('g'), function () {
-                    ports[key].drain(function(){
-                        console.log("start args: ", arguments);
-                    });
+            console.log(control_val);
+
+            // used keymap look up table to reference the control key to the control mode
+            ports[key].write(new Buffer(modeToKeyMap[control_val]), function () {
+                ports[key].drain(function(){
+                    console.log("start args: ", arguments);
                 });
-            } else if (control_val == 'stop'){
-                console.log("Stop");
-                ports[key].write(new Buffer('s'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'next'){
-                console.log("Next");
-                ports[key].write(new Buffer('n'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("next args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'previous'){
-                console.log("Previous");
-                ports[key].write(new Buffer('p'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'configure'){
-                console.log("Configure");
-                ports[key].write(new Buffer('c'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'sweep'){
-                console.log("Sweep");
-                ports[key].write(new Buffer('1'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'sweep_react'){
-                console.log("sweep_react");
-                ports[key].write(new Buffer('2'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("sweep_react args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'sweep_react_pause'){
-                console.log("sweep_react_pause");
-                ports[key].write(new Buffer('3'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("sweep_react_pause args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'noise'){
-                console.log("noise");
-                ports[key].write(new Buffer('4'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("noise args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'noise_react'){
-                console.log("Noise React");
-                ports[key].write(new Buffer('5'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("noise react pause args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'pattern_wave_small_v2'){
-                console.log("pattern_wave_small_v2");
-                ports[key].write(new Buffer('6'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'reset'){
-                console.log("reset");
-                ports[key].write(new Buffer('-'), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("stop args: ", arguments);
-                    });
-                });
-            } else if (control_val == 'reset_with_pause'){
-                console.log("reset_with_pause");
-                ports[key].write(new Buffer('='), function () {
-                    
-                    ports[key].drain(function(){
-                        console.log("reset_with_pause args: ", arguments);
-                    });
-                });
-            }
+            });
 
         });
     }
@@ -427,153 +283,20 @@ function panelControl(msg){
     console.log("panel_str", panel_str);
     console.log("behaviour", behaviour);
 
-
-    switch (behaviour) {
-        case 'start':
-            //Statements executed when the result of expression matches value1
-            control_val = "start";
-            break;
-        case 'stop':
-            //Statements executed when the result of expression matches value2
-            control_val = "stop";
-            break;
-        case 'measure':
-            //Statements executed when the result of expression matches value2
-            control_val = "measure";
-            break;
-        case 'measure_react':
-            //Statements executed when the result of expression matches value2
-            control_val = "measure_react";
-            break;
-        case 'pattern_wave_small':
-            //Statements executed when the result of expression matches valueN
-            control_val = "pattern_wave_small";
-            break;
-        case 'sweep':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep";
-            break;
-        case 'sweep_react':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep_react";
-            break;
-        case 'sweep_react_pause':
-            //Statements executed when the result of expression matches valueN
-            control_val = "sweep_react_pause";
-            break;
-        case 'noise':
-            //Statements executed when the result of expression matches valueN
-            control_val = "noise";
-            break;
-        case 'noise_react':
-            //Statements executed when the result of expression matches valueN
-            control_val = "noise_react";
-            break;
-        case 'reset':
-            //Statements executed when the result of expression matches valueN
-            control_val = "reset";
-            break;
-        case 'reset_with_pause':
-            //Statements executed when the result of expression matches valueN
-            control_val = "reset_with_pause";
-            break;
-        default:
-            //Statements executed when none of the values match the value of the expression
-            console.log("Default");
-            // nothing sends....
-            break;
-    }
+    // sets the behaviour control mesage to the control val for reference in lookup map
+    control_val = behaviour;
 
     // this resets only a certain panel to a default or mode
     var panel = panel_str.substring(1);
     console.log(panel);
 
-    if(control_val == 'start'){
-        console.log("START");
-        ports[panel].write(new Buffer("g"), function () {
-            ports[panel].drain(function(){
-                console.log("start args: ", arguments);
-            });
+    // used keymap look up table to reference the control key to the control mode
+    ports[panel].write(new Buffer(modeToKeyMap[control_val]), function () {
+        ports[panel].drain(function(){
+            console.log("start args: ", arguments);
         });
-    } else if (control_val == 'stop'){
-        console.log("Stop");
-        ports[panel].write(new Buffer("s"), function () {
-            ports[panel].drain(function(){
-                console.log("stop args: ", arguments);
-            });
-        });
-    } else if (control_val == 'sweep'){
-        console.log("Sweep");
-        ports[panel].write(new Buffer('1'), function () {
-            ports[panel].drain(function(){
-                console.log("stop args: ", arguments);
-            });
-        });
-    } else if (control_val == 'sweep_react'){
-        console.log("sweep_react");
-        ports[panel].write(new Buffer('2'), function () {
-            ports[panel].drain(function(){
-                console.log("sweep_react args: ", arguments);
-            });
-        });
-    } else if (control_val == 'sweep_react_pause'){
-        console.log("sweep_react_pause");
-        ports[panel].write(new Buffer('3'), function () {
-            ports[panel].drain(function(){
-                console.log("sweep_react_pause args: ", arguments);
-            });
-        });
-    } else if (control_val == 'noise'){
-        console.log("noise");
-        ports[panel].write(new Buffer('4'), function () {
-            ports[panel].drain(function(){
-                console.log("noise args: ", arguments);
-            });
-        });
-    } else if (control_val == 'noise_react'){
-        console.log("Noise React");
-        ports[panel].write(new Buffer('5'), function () {
-            ports[panel].drain(function(){
-                console.log("noise react pause args: ", arguments);
-            });
-        });
-    } else if (control_val == 'pattern_wave_small_v2'){
-        console.log("pattern_wave_small_v2");
-        ports[panel].write(new Buffer('6'), function () {
-            ports[panel].drain(function(){
-                console.log("pattern_wave_small_v2 args: ", arguments);
-            });
-        });
-    } else if (control_val == 'measure'){
-        console.log("measure");
-        ports[panel].write(new Buffer('7'), function () {
-            ports[panel].drain(function(){
-                console.log("measure args: ", arguments);
-            });
-        });
-    } else if (control_val == 'measure_react'){
-        console.log("measure_react");
-        ports[panel].write(new Buffer('8'), function () {
-            ports[panel].drain(function(){
-                console.log("measure_react args: ", arguments);
-            });
-        });
-    } else if (control_val == 'reset'){
-        console.log("reset");
-        ports[panel].write(new Buffer('-'), function () {
-            ports[panel].drain(function(){
-                console.log("reset args: ", arguments);
-            });
-        });
-    } else if (control_val == 'reset_with_pause'){
-        console.log("reset_with_pause");
-        ports[panel].write(new Buffer('='), function () {
-            
-            ports[panel].drain(function(){
-                console.log("reset_with_pause args: ", arguments);
-            });
-        });
-    }
+    });
+
 }
 
 initApp();
