@@ -7,6 +7,23 @@ var pubnub_config;
 var pub;
 var sub;
 
+// this is a zero index count
+var num_of_panels = 3;
+
+var function_control_list = [
+    'start',
+    'stop', 
+    'sweep', 
+    'sweep_react', 
+    'sweep_react_pause', 
+    'noise', 
+    'noise_react', 
+    'pattern_wave_small_v2',
+    'measure',
+    'measure_react',
+    'reset',
+    'reset_with_pause'];
+
 function preload() {
 
     loadStrings('../pubnub_config.txt', testFunction);
@@ -20,95 +37,42 @@ function setup() {
     controls = new Control();
     var gui = new dat.GUI({width:520});
 
-    // TODO
-    // Write this so it's not redundent... 
-    // loop through folder and folder items 
     var f = gui.addFolder("Ransomize");
     f.add(controls, 'randomize');
-    // f.add(controls, 'close_ports');
-    // f.add(controls, 'init_ports');
     f.add(controls, 'reset_serial_ports');
 
     var f0 = gui.addFolder("Global");
-    // f0.add(controls, 'randomize');
-    f0.add(controls, 'start');
-    f0.add(controls, 'stop');
-    // f0.add(controls, 'next');
-    // f0.add(controls, 'previous');
-    // f0.add(controls, 'configure');
-    f0.add(controls, 'sweep');
-    f0.add(controls, 'sweep_react');
-    f0.add(controls, 'sweep_react_pause');
-    f0.add(controls, 'noise');
-    f0.add(controls, 'noise_react');
-    f0.add(controls, 'pattern_wave_small_v2');
-    f0.add(controls, 'reset');
-    f0.add(controls, 'reset_with_pause');
-
-    // Commented out for reference
-    // perhaps latter
-    // f0.add(controls, 'wave');
-    // f0.add(controls, 'sweep');
-    // f0.add(controls, 'sweepinteract');
-    // f0.add(controls, 'noise');
-    // f0.add(controls, 'noiseinteract');
-
     var f1 = gui.addFolder("Arduino One");
-
-    f1.add(controls, 'start' + '__f0');
-    f1.add(controls, 'stop' + '__f0');
-    f1.add(controls, 'measure' + '__f0');
-    f1.add(controls, 'measure_react' + '__f0');
-    f1.add(controls, 'sweep' + '__f0');
-    f1.add(controls, 'sweep_react' + '__f0');
-    f1.add(controls, 'sweep_react_pause' + '__f0');
-    f1.add(controls, 'noise' + '__f0');
-    f1.add(controls, 'noise_react' + '__f0');
-    f1.add(controls, 'pattern_wave_small_v2' + '__f0');
-    f1.add(controls, 'reset' + '__f0');
-    f1.add(controls, 'reset_with_pause' + '__f0');
-
     var f2 = gui.addFolder("Arduino Two");
-    
-    f2.add(controls, 'start' + '__f1');
-    f2.add(controls, 'stop' + '__f1');
-    f2.add(controls, 'sweep' + '__f1');
-    f2.add(controls, 'sweep_react' + '__f1');
-    f2.add(controls, 'sweep_react_pause' + '__f1');
-    f2.add(controls, 'noise' + '__f1');
-    f2.add(controls, 'noise_react' + '__f1');
-    f2.add(controls, 'pattern_wave_small_v2' + '__f1');
-    f2.add(controls, 'reset' + '__f1');
-    f2.add(controls, 'reset_with_pause' + '__f1');
-
     var f3 = gui.addFolder("Arduino Three");
-    
-    f3.add(controls, 'start' + '__f2');
-    f3.add(controls, 'stop' + '__f2');
-    f3.add(controls, 'sweep' + '__f2');
-    f3.add(controls, 'sweep_react' + '__f2');
-    f3.add(controls, 'sweep_react_pause' + '__f2');
-    f3.add(controls, 'noise' + '__f2');
-    f3.add(controls, 'noise_react' + '__f2');
-    f3.add(controls, 'pattern_wave_small_v2' + '__f2');
-    f3.add(controls, 'reset' + '__f2');
-    f3.add(controls, 'reset_with_pause' + '__f2');
-
     var f4 = gui.addFolder("Arduino Four");
-    
-    f4.add(controls, 'start' + '__f3');
-    f4.add(controls, 'stop' + '__f3');
-    f4.add(controls, 'sweep' + '__f3');
-    f4.add(controls, 'sweep_react' + '__f3');
-    f4.add(controls, 'sweep_react_pause' + '__f3');
-    f4.add(controls, 'noise' + '__f3');
-    f4.add(controls, 'noise_react' + '__f3');
-    f3.add(controls, 'pattern_wave_small_v2' + '__f3');
-    f4.add(controls, 'reset' + '__f3');
-    f4.add(controls, 'reset_with_pause' + '__f3');
+
+    var i;
+    for(i = 0; i <= num_of_panels; i++){
+        _.forEach(function_control_list, function(value, key){
+            var suffix = "__f" + (i - 1);
+
+            if(i == 0){
+                console.log(value);
+                console.log(key);
+                console.log(controls);
+                
+                f0.add(controls, value);
+            } else if(i == 1){
+                f1.add(controls, value + suffix);
+            } else if(i == 2){
+                f2.add(controls, value + suffix);
+            } else if(i == 3){
+                f3.add(controls, value + suffix);
+            } else if(i == 4){
+                f4.add(controls, value + suffix);
+            }
+        });
+    };
 
     f.open();
-    f2.open();
+    f0.open();
+    // f2.open();
 
 } 
 
@@ -139,8 +103,6 @@ var lastAutoRestDelayShort = 10000;
 var lastAutoRestDelayLong = 30000;
 // 15 mins
 //long lastAutoRestDelayLong = 900000;
-
-var function_control_list = ['sweep', 'sweep_react', 'sweep_react_pause', 'noise', 'noise_react', 'pattern_wave_small_v2'];
 
 
 function draw() { 
@@ -250,39 +212,6 @@ function Control() {
         this.publish();
     }
 
-    this.next = function(){
-        console.log("next");
-        console.log(arguments);
-
-        publishConfig.message = {
-            message : "next"
-        };
-
-        this.publish();
-    }
-
-    this.previous = function(){
-        console.log("previous");
-        console.log(arguments);
-
-        publishConfig.message = {
-            message : "previous"
-        };
-
-        this.publish();
-    }
-
-    this.configure = function(){
-        console.log("configure");
-        console.log(arguments);
-
-        publishConfig.message = {
-            message : "configure"
-        };
-
-        this.publish();
-    }
-
     this.sweep = function(){
         console.log("sweep");
         console.log(arguments);
@@ -349,6 +278,28 @@ function Control() {
         this.publish();
     }
 
+    this.measure = function(){
+        console.log("measure");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure"
+        };
+
+        this.publish();
+    }
+
+    this.measure_react = function(){
+        console.log("measure_react");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure_react"
+        };
+
+        this.publish();
+    }
+
     this.reset = function(){
         console.log("reset");
         console.log(arguments);
@@ -396,45 +347,12 @@ function Control() {
         this.publish();
     }
 
-    // this.configure = function(){
-    //     console.log("configure");
-    //     console.log(arguments);
-
-    //     publishConfig.message = {
-    //         message : "configure"
-    //     };
-
-    //     this.publish();
-    // }
-
     this.sweep__f0 = function(){
         console.log("sweep__f0");
         console.log(arguments);
 
         publishConfig.message = {
             message : "sweep__f0"
-        };
-
-        this.publish();
-    }
-
-    this.measure__f0 = function(){
-        console.log("measure__f0");
-        console.log(arguments);
-
-        publishConfig.message = {
-            message : "measure__f0"
-        };
-
-        this.publish();
-    }
-
-    this.measure_react__f0 = function(){
-        console.log("measure_react");
-        console.log(arguments);
-
-        publishConfig.message = {
-            message : "measure_react__f0"
         };
 
         this.publish();
@@ -490,6 +408,28 @@ function Control() {
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f0"
+        };
+
+        this.publish();
+    }
+
+    this.measure__f0 = function(){
+        console.log("measure__f0");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure__f0"
+        };
+
+        this.publish();
+    }
+
+    this.measure_react__f0 = function(){
+        console.log("measure_react");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure_react__f0"
         };
 
         this.publish();
@@ -606,6 +546,28 @@ function Control() {
         this.publish();
     }
 
+    this.measure__f1 = function(){
+        console.log("measure__f1");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure__f1"
+        };
+
+        this.publish();
+    }
+
+    this.measure_react__f1 = function(){
+        console.log("measure_react__f1");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure_react__f1"
+        };
+
+        this.publish();
+    }
+
     this.reset__f1 = function(){
         console.log("reset");
         console.log(arguments);
@@ -717,6 +679,28 @@ function Control() {
         this.publish();
     }
 
+    this.measure__f2 = function(){
+        console.log("measure__f2");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure__f2"
+        };
+
+        this.publish();
+    }
+
+    this.measure_react__f2 = function(){
+        console.log("measure_react__f2");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure_react__f2"
+        };
+
+        this.publish();
+    }
+
     this.reset__f2 = function(){
         console.log("reset");
         console.log(arguments);
@@ -823,6 +807,28 @@ function Control() {
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f3"
+        };
+
+        this.publish();
+    }
+
+    this.measure__f3 = function(){
+        console.log("measure__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure__f3"
+        };
+
+        this.publish();
+    }
+
+    this.measure_react__f3 = function(){
+        console.log("measure_react__f3");
+        console.log(arguments);
+
+        publishConfig.message = {
+            message : "measure_react__f3"
         };
 
         this.publish();
