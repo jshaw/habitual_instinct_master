@@ -102,6 +102,20 @@ function initPortUpdates(){
             console.log('Data: ' + data);
             publishInstallationData(data);
         });
+
+        ports[key].on('error', function(err) {
+            console.log(arguments);
+            console.log('Error: ', err.message);
+            console.log('Error: ', err.message);
+            console.log('Error: ', err.message);
+            console.log('Error: ', err.message);
+            console.log('Error: ', err.message);
+            console.log('Error: ', err.message);
+
+            // would be good, that if there's an error, it auto closes all of the ports,
+            // then restarts them
+            resetSerialPorts();
+        });
     });
 }
 
@@ -109,14 +123,24 @@ function initPortUpdates(){
 
 // Resets the serial ports by closing them, then reopening them
 // ==========================
+var stopPromise;
+var closePromise;
 function resetSerialPorts(){
-    var closePromise = new Promise((resolve, reject) => { 
+    
+    stopPromise = new Promise((resolve, reject) => { 
+        globalControl('stop');
+        resolve("Success!");
+    });
+
+    closePromise = new Promise((resolve, reject) => { 
         _.forEach(ports, function(value, key){
             ports[key].flush(function(){
                 // console.log("close port: " + key);
                 // console.log("close port value: " + value);
                 // check the arguments that are passed in here
-                ports[key].close();
+                if(ports[key].isOpen()){
+                    ports[key].close();
+                }
 
                 // on the last loop, resolve the promise,
                 // this will cause all the serial ports to re-initiate.
@@ -127,12 +151,12 @@ function resetSerialPorts(){
         })
     });
 
-    closePromise.then(function(msg){
 
-        // once all of the ports are closed, reopen them
+    // when the two promises are complete,
+    // reinit the Ports
+    Promise.all([stopPromise, closePromise]).then(values => { 
         initPorts();
-
-    });
+    });    
 }
 
 
@@ -240,9 +264,10 @@ function publishInstallationData(data){
 function globalControl(msg){
     var control_val;
 
-    console.log("=================================");
-    console.log("control_val: ", control_val);
-    console.log("=================================");
+    // console.log("=================================");
+    // console.log("control_val: ", control_val);
+    // console.log("msg: ", msg);
+    // console.log("=================================");
 
     // assign the passed in message to the control val
     // this will use the loopup table to reference correct key control to pass via serial
@@ -256,14 +281,6 @@ function globalControl(msg){
 
         _.forEach(ports, function(value, key){
             
-            console.log("key: ", key);
-
-            // TODO, create a key look up table for the term to the single key for 
-            // TODO, create a key look up table for the term to the single key for 
-            // TODO, create a key look up table for the term to the single key for 
-            // TODO, create a key look up table for the term to the single key for 
-            // TODO, create a key look up table for the term to the single key for 
-            // TODO, create a key look up table for the term to the single key for 
             // =========================================
             // TODO, bind a function to the port write and for the drain functions so it doesn't need 
             // to be duplicated over and over and over... :/
@@ -278,7 +295,7 @@ function globalControl(msg){
             // used keymap look up table to reference the control key to the control mode
             ports[key].write(new Buffer(modeToKeyMap[control_val]), function () {
                 ports[key].drain(function(){
-                    console.log("start args: ", arguments);
+                    // console.log("start args: ", arguments);
                 });
             });
 
@@ -292,21 +309,16 @@ function panelControl(msg){
     var behaviour = split[0];
     var panel_str = split[1];
 
-
-    console.log("panel_str", panel_str);
-    console.log("behaviour", behaviour);
-
     // sets the behaviour control mesage to the control val for reference in lookup map
     control_val = behaviour;
 
     // this resets only a certain panel to a default or mode
     var panel = panel_str.substring(1);
-    console.log(panel);
 
     // used keymap look up table to reference the control key to the control mode
     ports[panel].write(new Buffer(modeToKeyMap[control_val]), function () {
         ports[panel].drain(function(){
-            console.log("start args: ", arguments);
+            // console.log("start args: ", arguments);
         });
     });
 
