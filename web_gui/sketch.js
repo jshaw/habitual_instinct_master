@@ -24,9 +24,17 @@ var function_control_list = [
     'reset',
     'reset_with_pause'];
 
+var randomize_function_list = [
+    'sweep', 
+    'sweep_react', 
+    'sweep_react_pause', 
+    'noise', 
+    'noise_react', 
+    'pattern_wave_small_v2'];
+
 function preload() {
 
-    loadStrings('../pubnub_config.txt', testFunction);
+    loadStrings('../pubnub_config.txt', loadPubNubConfig);
 }
 
 function setup() { 
@@ -80,8 +88,9 @@ function setup() {
 var random_mode = false;
 
 var millis_mode_timer = 0;
-var current_millis = 0;
 var randomize_last_autoreset = 0;
+
+var current_millis = 0;
 // var randomize_interval = 10000;
 // var randomize_pause_interval = 1000;
 
@@ -92,15 +101,20 @@ var randomize_last_autoreset = 0;
 ///////
 var lastAutoRest = 0;
 // var lastAutoRestDelay = 60000;
-var lastAutoRestDelay = 30000;
+var lastAutoRestDelay = 10000;
 
 // ideal would be run for 900000 (15 min)
 // rest for 30000 (30 seconds)
 // var lastAutoRestDelayShort = 60000;
-var lastAutoRestDelayShort = 10000;
+var lastAutoRestDelayShort = 5000;
 // 10 mins
 // var lastAutoRestDelayLong = 600000;
-var lastAutoRestDelayLong = 30000;
+// var lastAutoRestDelayLong = 30000;
+// var lastAutoRestDelayLong = 10000;
+
+// these two vars need to be the same
+var lastAutoRestDelayLong = lastAutoRestDelay;
+
 // 15 mins
 //long lastAutoRestDelayLong = 900000;
 
@@ -111,38 +125,42 @@ function draw() {
     random_mode = controls.randomize;
 
     current_millis = millis();
+    // would be useful to display on the screen what mode is actually active
 
     if(random_mode ==  true){
         console.log("random mode is active");
         if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
             lastAutoRest = millis();
-            console.log("0");
             if(lastAutoRestDelay == lastAutoRestDelayShort){
-                console.log("1");
                 lastAutoRestDelay = lastAutoRestDelayLong;
-                // var tmp_random_val = random(0, function_control_list.length);
-                // var method_name = function_control_list[tmp_random_val]
-                var method_name = 'sweep';
-                // TODO
-                // NEED TO EXECUTE A DYNAMICALLY / PROGROMATICALLY FUNCTION NAME
-                // http://stackoverflow.com/questions/969743/how-do-i-call-a-dynamically-named-method-in-javascript
-                // http://stackoverflow.com/questions/5905492/dynamic-function-name-in-javascript
-                // controls[method_name];
-                controls.sweep();
+                var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+                
+                // TODO: write this to the dom
+                console.log("method_name: ", method_name);
+
+                // http://stackoverflow.com/questions/1723287/calling-a-javascript-function-named-in-a-variable
+                var tmp_function = window["controls"]; 
+                tmp_function[method_name]();
                 
                 // buttonPushCounter  = tmp_random_val;
             } else if(lastAutoRestDelay == lastAutoRestDelayLong){
-                console.log("3");
                 lastAutoRestDelay = lastAutoRestDelayShort;
-                controls.stop();
+
+                // Switched this to reset serial ports to help try and prevent a buffer issue
+                // filling up or something... this will hopefully prevent some potential
+                // arduino crashes or glitches
+
+                // TODO: write this to the dom
+                // controls.stop();
+                controls.reset_serial_ports();
             }
         }
     }
 
 }
 
-function testFunction(str) {
-    console.log(arguments);
+function loadPubNubConfig(str) {
+    // console.log(arguments);
     pubnub_config = str;
     initPubNub();
 }
@@ -184,14 +202,6 @@ function Control() {
 
         this.publish();
     });
-
-    // this.close_ports = (function(){
-    //     console.log("close_ports");
-    // });
-
-    // this.init_ports = (function(){
-    //     console.log("init_ports");
-    // });
 
     this.start = function(){
         console.log("start");
@@ -260,7 +270,7 @@ function Control() {
 
     this.noise_react = function(){
         console.log("noise_react");
-        console.log(arguments);
+        console.log("******: ", arguments);
 
         publishConfig.message = {
             message : "noise_react"
