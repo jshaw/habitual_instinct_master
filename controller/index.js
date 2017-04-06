@@ -249,7 +249,7 @@ function publishInstallationData(data){
         message: data.trim(),
         channel: 'habitual_instinct_app',
         sendByPost: false, // true to send via post
-        storeInHistory: false, //override default storage options
+        storeInHistory: true, //override default storage options
         meta: {
             // "cool": "meta"
         } // publish extra meta with the request
