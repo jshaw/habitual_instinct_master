@@ -205,7 +205,7 @@ function Control() {
 
     this.start = function(){
         console.log("start");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "start"
@@ -226,7 +226,7 @@ function Control() {
 
     this.sweep = function(){
         console.log("sweep");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep"
@@ -237,7 +237,7 @@ function Control() {
 
     this.sweep_react = function(){
         console.log("sweep_react");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react"
@@ -248,7 +248,7 @@ function Control() {
 
     this.sweep_react_pause = function(){
         console.log("sweep_react_pause");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react_pause"
@@ -259,7 +259,7 @@ function Control() {
 
     this.noise = function(){
         console.log("noise");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise"
@@ -270,7 +270,6 @@ function Control() {
 
     this.noise_react = function(){
         console.log("noise_react");
-        console.log("******: ", arguments);
 
         publishConfig.message = {
             message : "noise_react"
@@ -281,7 +280,7 @@ function Control() {
 
     this.pattern_wave_small_v2 = function(){
         console.log("pattern_wave_small_v2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "pattern_wave_small_v2"
@@ -292,7 +291,7 @@ function Control() {
 
     this.measure = function(){
         console.log("measure");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure"
@@ -303,7 +302,6 @@ function Control() {
 
     this.measure_react = function(){
         console.log("measure_react");
-        console.log(arguments);
 
         publishConfig.message = {
             message : "measure_react"
@@ -314,7 +312,6 @@ function Control() {
 
     this.reset = function(){
         console.log("reset");
-        console.log(arguments);
 
         publishConfig.message = {
             message : "reset"
@@ -325,7 +322,6 @@ function Control() {
 
     this.reset_with_pause = function(){
         console.log("reset_with_pause");
-        console.log(arguments);
 
         publishConfig.message = {
             message : "reset_with_pause"
@@ -361,7 +357,6 @@ function Control() {
 
     this.sweep__f0 = function(){
         console.log("sweep__f0");
-        console.log(arguments);
 
         publishConfig.message = {
             message : "sweep__f0"
@@ -372,7 +367,7 @@ function Control() {
 
     this.sweep_react__f0 = function(){
         console.log("sweep_react__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react__f0"
@@ -383,7 +378,7 @@ function Control() {
 
     this.sweep_react_pause__f0 = function(){
         console.log("sweep_react_pause__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react_pause__f0"
@@ -394,7 +389,7 @@ function Control() {
 
     this.noise__f0 = function(){
         console.log("noise__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise__f0"
@@ -405,7 +400,7 @@ function Control() {
 
     this.noise_react__f0 = function(){
         console.log("noise_react__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise_react__f0"
@@ -416,7 +411,7 @@ function Control() {
 
     this.pattern_wave_small_v2__f0 = function(){
         console.log("pattern_wave_small_v2__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f0"
@@ -427,7 +422,7 @@ function Control() {
 
     this.measure__f0 = function(){
         console.log("measure__f0");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure__f0"
@@ -438,7 +433,7 @@ function Control() {
 
     this.measure_react__f0 = function(){
         console.log("measure_react");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure_react__f0"
@@ -449,7 +444,7 @@ function Control() {
 
     this.reset__f0 = function(){
         console.log("reset");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset__f0"
@@ -460,7 +455,7 @@ function Control() {
 
     this.reset_with_pause__f0 = function(){
         console.log("reset_with_pause");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset_with_pause__f0"
@@ -494,7 +489,7 @@ function Control() {
 
     this.sweep__f1 = function(){
         console.log("sweep__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep__f1"
@@ -505,7 +500,7 @@ function Control() {
 
     this.sweep_react__f1 = function(){
         console.log("sweep_react__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react__f1"
@@ -516,7 +511,7 @@ function Control() {
 
     this.sweep_react_pause__f1 = function(){
         console.log("sweep_react_pause__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react_pause__f1"
@@ -527,7 +522,7 @@ function Control() {
 
     this.noise__f1 = function(){
         console.log("noise__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise__f1"
@@ -538,7 +533,7 @@ function Control() {
 
     this.noise_react__f1 = function(){
         console.log("noise_react__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise_react__f1"
@@ -549,7 +544,7 @@ function Control() {
 
     this.pattern_wave_small_v2__f1 = function(){
         console.log("pattern_wave_small_v2__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f1"
@@ -560,7 +555,7 @@ function Control() {
 
     this.measure__f1 = function(){
         console.log("measure__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure__f1"
@@ -571,7 +566,7 @@ function Control() {
 
     this.measure_react__f1 = function(){
         console.log("measure_react__f1");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure_react__f1"
@@ -582,7 +577,7 @@ function Control() {
 
     this.reset__f1 = function(){
         console.log("reset");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset__f1"
@@ -593,7 +588,7 @@ function Control() {
 
     this.reset_with_pause__f1 = function(){
         console.log("reset_with_pause");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset_with_pause__f1"
@@ -627,7 +622,7 @@ function Control() {
 
     this.sweep__f2 = function(){
         console.log("sweep__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep__f2"
@@ -638,7 +633,7 @@ function Control() {
 
     this.sweep_react__f2 = function(){
         console.log("sweep_react__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react__f2"
@@ -649,7 +644,7 @@ function Control() {
 
     this.sweep_react_pause__f2 = function(){
         console.log("sweep_react_pause__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react_pause__f2"
@@ -660,7 +655,7 @@ function Control() {
 
     this.noise__f2 = function(){
         console.log("noise__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise__f2"
@@ -671,7 +666,7 @@ function Control() {
 
     this.noise_react__f2 = function(){
         console.log("noise_react__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise_react__f2"
@@ -682,7 +677,7 @@ function Control() {
 
     this.pattern_wave_small_v2__f2 = function(){
         console.log("pattern_wave_small_v2__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f2"
@@ -693,7 +688,7 @@ function Control() {
 
     this.measure__f2 = function(){
         console.log("measure__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure__f2"
@@ -704,7 +699,7 @@ function Control() {
 
     this.measure_react__f2 = function(){
         console.log("measure_react__f2");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure_react__f2"
@@ -715,7 +710,7 @@ function Control() {
 
     this.reset__f2 = function(){
         console.log("reset");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset__f2"
@@ -726,7 +721,7 @@ function Control() {
 
     this.reset_with_pause__f2 = function(){
         console.log("reset_with_pause");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset_with_pause__f2"
@@ -760,7 +755,7 @@ function Control() {
 
     this.sweep__f3 = function(){
         console.log("sweep__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep__f3"
@@ -771,7 +766,7 @@ function Control() {
 
     this.sweep_react__f3 = function(){
         console.log("sweep_react__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react__f3"
@@ -782,7 +777,7 @@ function Control() {
 
     this.sweep_react_pause__f3 = function(){
         console.log("sweep_react_pause__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "sweep_react_pause__f3"
@@ -793,7 +788,7 @@ function Control() {
 
     this.noise__f3 = function(){
         console.log("noise__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise__f3"
@@ -804,7 +799,7 @@ function Control() {
 
     this.noise_react__f3 = function(){
         console.log("noise_react__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "noise_react__f3"
@@ -815,7 +810,7 @@ function Control() {
 
     this.pattern_wave_small_v2__f3 = function(){
         console.log("pattern_wave_small_v2__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "pattern_wave_small_v2__f3"
@@ -826,7 +821,7 @@ function Control() {
 
     this.measure__f3 = function(){
         console.log("measure__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure__f3"
@@ -837,7 +832,7 @@ function Control() {
 
     this.measure_react__f3 = function(){
         console.log("measure_react__f3");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "measure_react__f3"
@@ -848,7 +843,7 @@ function Control() {
 
     this.reset__f3 = function(){
         console.log("reset");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset__f3"
@@ -859,7 +854,7 @@ function Control() {
 
     this.reset_with_pause__f3 = function(){
         console.log("reset_with_pause");
-        console.log(arguments);
+        
 
         publishConfig.message = {
             message : "reset_with_pause__f3"
