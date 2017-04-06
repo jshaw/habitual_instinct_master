@@ -8,6 +8,8 @@ var jsonfile = require('jsonfile')
 var file = './../pubnub_config.json';
 var json
 
+var control_val;
+
 var ports = [];
 
 var modeToKeyMap = {
@@ -114,6 +116,9 @@ function initPortUpdates(){
 
             // would be good, that if there's an error, it auto closes all of the ports,
             // then restarts them
+            if(ports[key].isOpen()){
+                ports[key].close();
+            }
             resetSerialPorts();
         });
     });
@@ -245,24 +250,31 @@ function initPubNubInstallation(){
 
 function publishInstallationData(data){
 
-    pubnub_installation.publish({
-        message: data.trim(),
-        channel: 'habitual_instinct_app',
-        sendByPost: false, // true to send via post
-        storeInHistory: true, //override default storage options
-        meta: {
-            // "cool": "meta"
-        } // publish extra meta with the request
-    },
-    function (status, response) {
-        // handle status, response
-        console.log("response log: ", arguments);
-    });
+    if ( (control_val != "stop") && (data.trim().length > 20)){
+
+
+        pubnub_installation.publish({
+            message: data.trim(),
+            channel: 'habitual_instinct_app',
+            sendByPost: false, // true to send via post
+            storeInHistory: true, //override default storage options
+            meta: {
+                // "cool": "meta"
+            } // publish extra meta with the request
+        },
+        function (status, response) {
+            // handle status, response
+            console.log("response log: ", arguments);
+        });
+
+    } else {
+        console.log("don't send data, it is stopped");
+
+    }
 
 }
 
 function globalControl(msg){
-    var control_val;
 
     // console.log("=================================");
     // console.log("control_val: ", control_val);
@@ -304,7 +316,7 @@ function globalControl(msg){
 }
 
 function panelControl(msg){
-    var control_val;
+    // var control_val;
     var split = msg.split("__");
     var behaviour = split[0];
     var panel_str = split[1];
