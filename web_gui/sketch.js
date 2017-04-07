@@ -53,7 +53,7 @@ function setup() {
     var f1 = gui.addFolder("Arduino One");
     var f2 = gui.addFolder("Arduino Two");
     var f3 = gui.addFolder("Arduino Three");
-    var f4 = gui.addFolder("Arduino Four");
+    // var f4 = gui.addFolder("Arduino Four");
 
     var i;
     for(i = 0; i <= num_of_panels; i++){
