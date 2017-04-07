@@ -114,6 +114,8 @@ function initPortUpdates(){
             console.log('Error: ', err.message);
             console.log('Error: ', err.message);
 
+            process.exit();
+
             // would be good, that if there's an error, it auto closes all of the ports,
             // then restarts them
             if(ports[key].isOpen()){
@@ -130,6 +132,39 @@ function initPortUpdates(){
 // ==========================
 var stopPromise;
 var closePromise;
+
+
+function globalStop(){
+    
+    globalControl('stop');
+    resolve("Success!");  
+}
+
+function closeAllPorts(){
+    
+    _.forEach(ports, function(value, key){
+        ports[key].flush(function(){
+            // console.log("close port: " + key);
+            // console.log("close port value: " + value);
+            // check the arguments that are passed in here
+            if(ports[key].isOpen()){
+                ports[key].close();
+            }
+
+            // on the last loop, resolve the promise,
+            // this will cause all the serial ports to re-initiate.
+            if(key == (ports.length-1)){
+                resolve("Success!");
+            }
+        });
+    });
+}
+
+function resetSerialPorts(){
+    initPorts();
+}
+
+
 function resetSerialPorts(){
     
     stopPromise = new Promise((resolve, reject) => { 
