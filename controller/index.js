@@ -87,7 +87,7 @@ if(device == 'mac'){
 
 } else if (device == 'pi'){
     // Raspberry Pi
-    var portsLookup = [0, 1, 2];
+    var portsLookup = [1, 2, 0];
     var usb = '/dev/ttyACM';
 
 }
