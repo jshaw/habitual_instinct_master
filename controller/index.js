@@ -10,6 +10,9 @@ var json
 
 var control_val;
 
+// var device = "mac";
+var device = "pi";
+
 var ports = [];
 
 var modeToKeyMap = {
@@ -76,19 +79,20 @@ function listPorts(){
 // ==========
 
 
-// Mac
-// var portsLookup = [14111, 14121, 14131];
-// var portsLookup = [14111, 14121, 14131, 14141];
-// var usb = '/dev/cu.usbmodem';
+if(device == 'mac'){
+    // Mac
+    var portsLookup = [14111, 14121, 14131];
+    // var portsLookup = [14111, 14121, 14131, 14141];
+    var usb = '/dev/cu.usbmodem';
 
+} else if (device == 'pi'){
+    // Raspberry Pi
+    var portsLookup = [0, 1, 2];
+    var usb = '/dev/ttyACM';
 
-// Raspberry Pi
-var portsLookup = [0, 1, 2];
-var usb = '/dev/ttyACM';
-
+}
 
 var globalBaudRate = 115200;
-
 
 function initPorts(){
 
