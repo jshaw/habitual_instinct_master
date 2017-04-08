@@ -75,14 +75,25 @@ function listPorts(){
 // Todo, create ports via loop of usbmodem port ID
 // ==========
 
-var portsLookup = [14111, 14121, 14131];
-var globalBaudRate = 115200;
+
+// Mac
+// var portsLookup = [14111, 14121, 14131];
 // var portsLookup = [14111, 14121, 14131, 14141];
+// var usb = '/dev/cu.usbmodem';
+
+
+// Raspberry Pi
+var portsLookup = [0, 1, 2];
+var usb = '/dev/ttyACM';
+
+
+var globalBaudRate = 115200;
+
 
 function initPorts(){
 
     _.forEach(portsLookup, function(value, key){
-        var serialPortConnect = '/dev/cu.usbmodem' + value;
+        var serialPortConnect = usb + value;
         ports[key] = new SerialPort(serialPortConnect, {
             parser: SerialPort.parsers.readline('\n'),
             baudRate: globalBaudRate
@@ -114,7 +125,7 @@ function initPortUpdates(){
             console.log('Error: ', err.message);
             console.log('Error: ', err.message);
 
-            process.exit();
+            // process.exit();
 
             // would be good, that if there's an error, it auto closes all of the ports,
             // then restarts them
