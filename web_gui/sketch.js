@@ -7,6 +7,8 @@ var pubnub_config;
 var pub;
 var sub;
 
+var pubnub_logging;
+
 // this is a zero index count
 var num_of_panels = 3;
 
@@ -47,6 +49,7 @@ function setup() {
 
     var f = gui.addFolder("Ransomize");
     f.add(controls, 'randomize');
+    f.add(controls, 'data_logging');
     f.add(controls, 'reset_serial_ports');
 
     var f0 = gui.addFolder("Global");
@@ -123,6 +126,7 @@ function draw() {
     background(colors.r, colors.g, colors.b);
 
     random_mode = controls.randomize;
+    data_logging = controls.data_logging;
 
     current_millis = millis();
     // would be useful to display on the screen what mode is actually active
@@ -163,6 +167,7 @@ function loadPubNubConfig(str) {
     // console.log(arguments);
     pubnub_config = str;
     initPubNub();
+    pubnubDataLogging();
 }
 
 function initPubNub(){
@@ -174,6 +179,38 @@ function initPubNub(){
     });
 
 }
+
+function pubnubDataLogging(){
+
+
+    pubnub_logging = new PubNub({
+        publishKey : pubnub_config[3].toString(),
+        subscribeKey : pubnub_config[4].toString(),
+        ssl: true
+    });
+       
+    pubnub_logging.addListener({
+        status: function(statusEvent) {
+            if (statusEvent.category === "PNConnectedCategory") {
+                // publishSampleMessage();
+            }
+        },
+        message: function(message) {
+            if(data_logging == true){
+                console.log("Data Logs: ", message);
+            }
+        },
+        presence: function(presenceEvent) {
+            // handle presence
+        }
+    })      
+    
+    pubnub_logging.subscribe({
+        channels: ['habitual_instinct_app'] 
+
+    });
+}
+
 
 function Color() {
     this.r = 65;
@@ -193,6 +230,7 @@ function Control() {
     };
 
     this.randomize = false;
+    this.data_logging = false;
 
     this.reset_serial_ports = (function(){
         console.log("reset_serial_ports");
