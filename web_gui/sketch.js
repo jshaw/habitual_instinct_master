@@ -1,5 +1,5 @@
-var colors;
-var texts;
+// var colors;
+// var texts;
 var controls;
 
 var pubnub;
@@ -42,13 +42,34 @@ function preload() {
 function setup() { 
     createCanvas(400, 400);
 
-    colors = new Color();
-    texts = new Text();
+    // colors = new Color();
+    // texts = new Text();
+
     controls = new Control();
     var gui = new dat.GUI({width:520});
 
+    gui.remember(controls);
+
     var f = gui.addFolder("Ransomize");
     f.add(controls, 'randomize');
+    f.add(controls, 'randomize_timer')
+        .min(0)
+        .max(600000)
+        .step(1000)
+        .onFinishChange(function(value){
+            randomize_timer = value;
+            console.log("randomize_timer: " + randomize_timer);
+        });
+
+    f.add(controls, 'pause_timer')
+        .min(0)
+        .max(60000)
+        .step(1000)
+        .onFinishChange(function(value){
+            pause_timer = value;
+            console.log("pause_timer: " + pause_timer);
+        });
+
     f.add(controls, 'data_logging');
     f.add(controls, 'reset_serial_ports');
 
@@ -64,9 +85,9 @@ function setup() {
             var suffix = "__f" + (i - 1);
 
             if(i == 0){
-                console.log(value);
-                console.log(key);
-                console.log(controls);
+                // console.log(value);
+                // console.log(key);
+                // console.log(controls);
                 
                 f0.add(controls, value);
             } else if(i == 1){
@@ -87,8 +108,9 @@ function setup() {
 
 } 
 
-
 var random_mode = false;
+var randomize_timer = 10000;
+var pause_timer = 5000;
 
 var millis_mode_timer = 0;
 var randomize_last_autoreset = 0;
@@ -123,7 +145,7 @@ var lastAutoRestDelayLong = lastAutoRestDelay;
 
 
 function draw() { 
-    background(colors.r, colors.g, colors.b);
+    // background(colors.r, colors.g, colors.b);
 
     random_mode = controls.randomize;
     data_logging = controls.data_logging;
@@ -212,17 +234,17 @@ function pubnubDataLogging(){
 }
 
 
-function Color() {
-    this.r = 65;
-    this.g = 109;
-    this.b = 181;
-}
+// function Color() {
+//     this.r = 65;
+//     this.g = 109;
+//     this.b = 181;
+// }
 
-function Text() {
-    this.explode = function(){
-        console.log("asdfasdf");
-    }
-}
+// function Text() {
+//     this.explode = function(){
+//         console.log("asdfasdf");
+//     }
+// }
 
 function Control() {
     var publishConfig = {
@@ -230,6 +252,10 @@ function Control() {
     };
 
     this.randomize = false;
+
+    this.randomize_timer = 10000;
+    this.pause_timer = 5000;
+
     this.data_logging = false;
 
     this.reset_serial_ports = (function(){
@@ -902,6 +928,8 @@ function Control() {
     }
 
     this.publish = function(){
+
+        console.log("remember to put the publish back into the app");
         pubnub.publish(publishConfig, function(status, response) {
             console.log(status, response);
         });
