@@ -42,9 +42,6 @@ function preload() {
 function setup() { 
     createCanvas(400, 400);
 
-    // colors = new Color();
-    // texts = new Text();
-
     controls = new Control();
     var gui = new dat.GUI({width:520});
 
@@ -57,8 +54,8 @@ function setup() {
         .max(600000)
         .step(1000)
         .onFinishChange(function(value){
-            randomize_timer = value;
-            console.log("randomize_timer: " + randomize_timer);
+            lastAutoRestDelay = value;
+            console.log("lastAutoRestDelay: " + lastAutoRestDelayLong);
         });
 
     f.add(controls, 'pause_timer')
@@ -66,8 +63,9 @@ function setup() {
         .max(60000)
         .step(1000)
         .onFinishChange(function(value){
-            pause_timer = value;
-            console.log("pause_timer: " + pause_timer);
+            lastAutoRestDelayShort = value;
+            console.log("lastAutoRestDelayShort: " + lastAutoRestDelayShort);
+
         });
 
     f.add(controls, 'data_logging');
@@ -85,10 +83,6 @@ function setup() {
             var suffix = "__f" + (i - 1);
 
             if(i == 0){
-                // console.log(value);
-                // console.log(key);
-                // console.log(controls);
-                
                 f0.add(controls, value);
             } else if(i == 1){
                 f1.add(controls, value + suffix);
@@ -109,43 +103,36 @@ function setup() {
 } 
 
 var random_mode = false;
-var randomize_timer = 10000;
-var pause_timer = 5000;
-
-var millis_mode_timer = 0;
-var randomize_last_autoreset = 0;
-
 var current_millis = 0;
-// var randomize_interval = 10000;
-// var randomize_pause_interval = 1000;
-
-// var randomize_interval = 30000;
-// var randomize_pause_interval = 10000;
-
 
 ///////
 var lastAutoRest = 0;
-// var lastAutoRestDelay = 60000;
-var lastAutoRestDelay = 10000;
+
 
 // ideal would be run for 900000 (15 min)
 // rest for 30000 (30 seconds)
-// var lastAutoRestDelayShort = 60000;
-var lastAutoRestDelayShort = 5000;
-// 10 mins
-// var lastAutoRestDelayLong = 600000;
-// var lastAutoRestDelayLong = 30000;
-// var lastAutoRestDelayLong = 10000;
+
+// NOTE TODO:
+//////////////
+// put in a test thing so that if testing the timer is super tiny... other wise
+// its the normal size larger numbers
+
+// 1 minute
+var lastAutoRestDelayShort = 60000;
+// var lastAutoRestDelayShort = 5000;
+
+// 5 minutes
+// var lastAutoRestDelay = 300000;
+var lastAutoRestDelay = lastAutoRestDelayShort;
 
 // these two vars need to be the same
-var lastAutoRestDelayLong = lastAutoRestDelay;
+var lastAutoRestDelayLong = 300000;
+// var lastAutoRestDelayLong = 10000;
 
-// 15 mins
-//long lastAutoRestDelayLong = 900000;
 
+var last_active_mode = "noise_react";;
 
 function draw() { 
-    // background(colors.r, colors.g, colors.b);
 
     random_mode = controls.randomize;
     data_logging = controls.data_logging;
@@ -154,10 +141,12 @@ function draw() {
     // would be useful to display on the screen what mode is actually active
 
     if(random_mode ==  true){
-        console.log("random mode is active");
+
         if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
             lastAutoRest = millis();
+
             if(lastAutoRestDelay == lastAutoRestDelayShort){
+
                 lastAutoRestDelay = lastAutoRestDelayLong;
                 var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
                 
@@ -167,8 +156,9 @@ function draw() {
                 // http://stackoverflow.com/questions/1723287/calling-a-javascript-function-named-in-a-variable
                 var tmp_function = window["controls"]; 
                 tmp_function[method_name]();
+
+                // last_active_mode = tmp_function;
                 
-                // buttonPushCounter  = tmp_random_val;
             } else if(lastAutoRestDelay == lastAutoRestDelayLong){
                 lastAutoRestDelay = lastAutoRestDelayShort;
 
@@ -178,9 +168,32 @@ function draw() {
 
                 // TODO: write this to the dom
                 // controls.stop();
+
+                console.log('reset serial');
                 controls.reset_serial_ports();
             }
         }
+    } else {
+
+        // the auto pause for not random selection of installation
+        if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
+            lastAutoRest = millis();
+
+            if(lastAutoRestDelay == lastAutoRestDelayShort){
+                lastAutoRestDelay = lastAutoRestDelayLong;
+
+                var tmp_function = window["controls"]; 
+                tmp_function[last_active_mode]();
+                
+            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+                lastAutoRestDelay = lastAutoRestDelayShort;
+
+                console.log('reset serial');
+                controls.reset_serial_ports();
+            }
+        }
+
+
     }
 
 }
@@ -234,27 +247,14 @@ function pubnubDataLogging(){
 }
 
 
-// function Color() {
-//     this.r = 65;
-//     this.g = 109;
-//     this.b = 181;
-// }
-
-// function Text() {
-//     this.explode = function(){
-//         console.log("asdfasdf");
-//     }
-// }
-
 function Control() {
     var publishConfig = {
         channel : "habitual_instinct_control",
     };
 
     this.randomize = false;
-
-    this.randomize_timer = 10000;
-    this.pause_timer = 5000;
+    this.randomize_timer = lastAutoRestDelayLong;
+    this.pause_timer = lastAutoRestDelayShort;
 
     this.data_logging = false;
 
@@ -930,6 +930,20 @@ function Control() {
     this.publish = function(){
 
         console.log("remember to put the publish back into the app");
+
+        // this sets the last / previous mode that was selected
+        var tmp_msg = publishConfig.message.message;
+        if(tmp_msg != 'reset_with_pause' 
+            && tmp_msg != 'reset' 
+            && tmp_msg != 'measure'
+            && tmp_msg != 'stop'
+            && tmp_msg != 'measure_react'
+            && tmp_msg != 'reset_serial_ports'){
+         
+                last_active_mode = publishConfig.message.message;
+                console.log(">>>> " + last_active_mode);
+        }
+
         pubnub.publish(publishConfig, function(status, response) {
             console.log(status, response);
         });
