@@ -4,6 +4,24 @@ html, body {
   padding: 0;
 }
 
+
+.main {
+    width: 50% !important;
+}
+
+.dg{
+    font-size: 15px;
+}
+
 dg .slider {
-    width: 60% !important;
+    width: 80% !important;
+}
+
+.dg li:not(.folder){
+    height: 30px;
+}
+
+.dg .close-button,
+.dg .save-row {
+    width: 50% !important;
 }

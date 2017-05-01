@@ -13,6 +13,28 @@ var control_val;
 // var device = "mac";
 var device = "pi";
 
+
+var current_mode = 'noise_react';
+var previous_mode = 'stop';
+var last_active_mode = "noise_react";
+
+
+// taken from the gui code. The functionality needs to be added here,
+// to allow for not always having to maintaine and have active browsers.
+
+// 1 minute
+var lastAutoRestDelayShort = 60000;
+// 5 seconds
+// var lastAutoRestDelayShort = 5000;
+
+// 5 minutes
+// var lastAutoRestDelay = 300000;
+var lastAutoRestDelay = lastAutoRestDelayShort;
+
+// these two vars need to be the same
+var lastAutoRestDelayLong = 300000;
+// var lastAutoRestDelayLong = 10000;
+
 var ports = [];
 
 var modeToKeyMap = {
@@ -29,6 +51,14 @@ var modeToKeyMap = {
     'reset': '-',
     'reset_with_pause': '='
 };
+
+var randomize_function_list = [
+    'sweep', 
+    'sweep_react', 
+    'sweep_react_pause', 
+    'noise', 
+    'noise_react', 
+    'pattern_wave_small_v2'];
 
 jsonfile.readFile(file, function(err, obj) {
     console.dir(obj);
@@ -55,6 +85,7 @@ jsonfile.readFile(file, function(err, obj) {
 
 function initApp(){
     listPorts();
+    startModeTimer();
 }
 
 function listPorts(){
@@ -67,7 +98,10 @@ function listPorts(){
         });
     });
 
-    initPorts();
+    // TODO: Put Back In!
+    // When not writing tests without arduinos connected to computer
+    // ==================
+    // initPorts();
 
 }
 
@@ -124,10 +158,6 @@ function initPortUpdates(){
             console.log(arguments);
             console.log('Error: ', err.message);
             console.log('Error: ', err.message);
-            console.log('Error: ', err.message);
-            console.log('Error: ', err.message);
-            console.log('Error: ', err.message);
-            console.log('Error: ', err.message);
 
             // process.exit();
 
@@ -141,7 +171,94 @@ function initPortUpdates(){
     });
 }
 
+var current_timer = 0;
+var random_mode = true;
+var lastAutoRest = 0;
 
+function startModeTimer(){
+
+}
+
+
+var global_timer = setInterval(function() {
+    current_timer += 33;
+
+    // console.log("lastAutoRestDelay: ", lastAutoRestDelay);
+    // console.log("lastAutoRestDelayShort: ", lastAutoRestDelayShort);
+    // console.log("lastAutoRestDelayLong: ", lastAutoRestDelayLong);
+
+    if ((current_timer - lastAutoRest) > lastAutoRestDelay) {
+
+        console.log("----------");
+        console.log("----------");
+        console.log("----------");
+        // console.log("----------");
+        // console.log("----------");
+        // console.log("----------");
+        // console.log("----------");
+        // console.log("----------");
+
+        lastAutoRest = current_timer;
+
+        // console.log("***** random_mode" , random_mode);
+
+        if(random_mode ==  true){
+
+            // console.log("RANDOM VALUE = TRUE!");
+
+            if(lastAutoRestDelay == lastAutoRestDelayShort){
+
+                lastAutoRestDelay = lastAutoRestDelayLong;
+                var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+                
+                // TODO: write this to the dom
+                console.log("method_name: ", method_name);
+
+                globalControl(method_name);
+
+                last_active_mode = method_name;
+
+                previous_mode = current_mode;
+                current_mode = method_name;
+                
+                
+            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+                lastAutoRestDelay = lastAutoRestDelayShort;
+
+                // Switched this to reset serial ports to help try and prevent a buffer issue
+                // filling up or something... this will hopefully prevent some potential
+                // arduino crashes or glitches
+
+                // TODO: write this to the dom
+                // controls.stop();
+
+                // console.log('reset serial');
+
+                resetSerialPorts();
+            }
+
+        } else {
+
+            // console.log("RANDOM VALUE = FALSE!");
+
+            if(lastAutoRestDelay == lastAutoRestDelayShort){
+                lastAutoRestDelay = lastAutoRestDelayLong;
+
+                // var tmp_function = window["controls"]; 
+                // tmp_function[last_active_mode]();
+                globalControl(last_active_mode);
+                
+            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+                lastAutoRestDelay = lastAutoRestDelayShort;
+
+                // console.log('reset serial');
+                resetSerialPorts();
+            }
+
+        }
+    }
+
+}, 33);
 
 // Resets the serial ports by closing them, then reopening them
 // ==========================
@@ -175,9 +292,11 @@ function closeAllPorts(){
     });
 }
 
-function resetSerialPorts(){
-    initPorts();
-}
+// removed cause of duplicate function
+// function resetSerialPorts(){
+//     // TODO: Remember to put this back in!
+//     //initPorts();
+// }
 
 
 function resetSerialPorts(){
@@ -188,29 +307,40 @@ function resetSerialPorts(){
     });
 
     closePromise = new Promise((resolve, reject) => { 
-        _.forEach(ports, function(value, key){
-            ports[key].flush(function(){
-                // console.log("close port: " + key);
-                // console.log("close port value: " + value);
-                // check the arguments that are passed in here
-                if(ports[key].isOpen()){
-                    ports[key].close();
-                }
 
-                // on the last loop, resolve the promise,
-                // this will cause all the serial ports to re-initiate.
-                if(key == (ports.length-1)){
-                    resolve("Success!");
-                }
-            });
-        })
+        if(ports.length > 0){
+            _.forEach(ports, function(value, key){
+                ports[key].flush(function(){
+                    // console.log("close port: " + key);
+                    // console.log("close port value: " + value);
+                    // check the arguments that are passed in here
+                    if(ports[key].isOpen()){
+                        ports[key].close();
+                    }
+
+                    // on the last loop, resolve the promise,
+                    // this will cause all the serial ports to re-initiate.
+                    if(key == (ports.length-1)){
+                        resolve("Success!");
+                    }
+                });
+            })
+        } else {
+            resolve("Success!");
+        }
     });
 
 
     // when the two promises are complete,
     // reinit the Ports
     Promise.all([stopPromise, closePromise]).then(values => { 
-        initPorts();
+        // console.log("In Promise Resolved All");
+        // If init isn't called in setup, this won't get called, meaning that 
+        // to debug timing logic only the above init needs to be commented out. This should
+        // run fine if it has Arduinos connected
+        if(ports.length > 0){
+            initPorts();
+        }
     });    
 }
 
@@ -227,17 +357,43 @@ function initPubNub(){
             var msg = m.message; // The Payload
             var msg_str = msg.message;
 
+            // console.log("msg_str: " + msg_str);
+            // console.log("Random timer index: ", msg_str.indexOf("control_randomize_timer"));
 
             if(msg_str == "reset_serial_ports"){
                 // console.log('reset_serial_ports');
                 resetSerialPorts();
 
+            } else if(msg_str.indexOf("control_randomize_toggle_") >= 0){
+                // add randomize logic
+                var tmp_val = msg_str.lastIndexOf("_");
+                tmp_val = msg_str.substring(tmp_val + 1);
+
+                // console.log("CURRENT VALUE: ", tmp_val);
+
+                random_mode = tmp_val;
+            } else if(msg_str.indexOf("control_randomize_timer") >= 0){
+                var tmp_val = msg_str.lastIndexOf("_");
+                tmp_val = msg_str.substring(tmp_val + 1);
+
+                // console.log("tmp_val", tmp_val);
+
+                lastAutoRestDelayLong = tmp_val;
+
+            } else if(msg_str.indexOf("control_pause_timer") >= 0){
+                var tmp_val = msg_str.lastIndexOf("_");
+                tmp_val = msg_str.substring(tmp_val + 1);
+
+                lastAutoRestDelayShort = tmp_val;
+                lastAutoRestDelay = lastAutoRestDelayShort;
+
+            
             } else if(msg_str.indexOf("__") == -1){
                 // this means that it is a global control
                 // global control
                 globalControl(msg_str);
             }else {
-                console.log("get here?");
+                // console.log("get here?");
                 panelControl(msg_str);
             }
         },
@@ -302,7 +458,6 @@ function publishInstallationData(data){
 
     if ( (control_val != "stop") && (data.trim().length > 20)){
 
-
         pubnub_installation.publish({
             message: data.trim(),
             channel: 'habitual_instinct_app',
@@ -335,11 +490,12 @@ function globalControl(msg){
     // this will use the loopup table to reference correct key control to pass via serial
     control_val = msg;
 
-    console.log("control_val", control_val);
-    console.log("ports", ports.length);
+    // console.log("control_val: ", control_val);
+    // console.log("ports", ports.length);
+    // console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
     if(ports.length > 0){
-        console.log("do we get here?");
+        // console.log("do we get here?");
 
         _.forEach(ports, function(value, key){
             

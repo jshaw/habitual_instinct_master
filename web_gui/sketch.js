@@ -26,13 +26,13 @@ var function_control_list = [
     'reset',
     'reset_with_pause'];
 
-var randomize_function_list = [
-    'sweep', 
-    'sweep_react', 
-    'sweep_react_pause', 
-    'noise', 
-    'noise_react', 
-    'pattern_wave_small_v2'];
+// var randomize_function_list = [
+//     'sweep', 
+//     'sweep_react', 
+//     'sweep_react_pause', 
+//     'noise', 
+//     'noise_react', 
+//     'pattern_wave_small_v2'];
 
 function preload() {
 
@@ -44,11 +44,18 @@ function setup() {
 
     controls = new Control();
     var gui = new dat.GUI({width:520});
-
     gui.remember(controls);
 
     var f = gui.addFolder("Ransomize");
-    f.add(controls, 'randomize');
+    f.add(controls, 'randomize').onChange(function(value){
+        console.log("random val change: ", value);
+        controls.publishConfig.message = {
+            message : "control_randomize_toggle_" + value
+        };
+
+        controls.publish();
+    });
+
     f.add(controls, 'randomize_timer')
         .min(0)
         .max(600000)
@@ -56,6 +63,15 @@ function setup() {
         .onFinishChange(function(value){
             lastAutoRestDelay = value;
             console.log("lastAutoRestDelay: " + lastAutoRestDelayLong);
+
+            console.log("controls:" + controls.publishConfig);
+
+            controls.publishConfig.message = {
+                message : "control_randomize_timer_" + value
+            };
+
+            controls.publish();
+
         });
 
     f.add(controls, 'pause_timer')
@@ -65,6 +81,12 @@ function setup() {
         .onFinishChange(function(value){
             lastAutoRestDelayShort = value;
             console.log("lastAutoRestDelayShort: " + lastAutoRestDelayShort);
+
+            controls.publishConfig.message = {
+                message : "control_pause_timer_" + value
+            };
+
+            controls.publish();
 
         });
 
@@ -102,7 +124,7 @@ function setup() {
 
 } 
 
-var random_mode = false;
+var random_mode = true;
 var current_millis = 0;
 
 ///////
@@ -130,7 +152,7 @@ var lastAutoRestDelayLong = 300000;
 // var lastAutoRestDelayLong = 10000;
 
 
-var last_active_mode = "noise_react";;
+var last_active_mode = "noise_react";
 
 function draw() { 
 
@@ -140,66 +162,65 @@ function draw() {
     current_millis = millis();
     // would be useful to display on the screen what mode is actually active
 
-    if(random_mode ==  true){
+    // if(random_mode ==  true){
 
-        if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
-            lastAutoRest = millis();
+    //     if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
+    //         lastAutoRest = millis();
 
-            if(lastAutoRestDelay == lastAutoRestDelayShort){
+    //         if(lastAutoRestDelay == lastAutoRestDelayShort){
 
-                lastAutoRestDelay = lastAutoRestDelayLong;
-                var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+    //             lastAutoRestDelay = lastAutoRestDelayLong;
+    //             var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
                 
-                // TODO: write this to the dom
-                console.log("method_name: ", method_name);
+    //             // TODO: write this to the dom
+    //             console.log("method_name: ", method_name);
 
-                // http://stackoverflow.com/questions/1723287/calling-a-javascript-function-named-in-a-variable
-                var tmp_function = window["controls"]; 
-                tmp_function[method_name]();
+    //             // http://stackoverflow.com/questions/1723287/calling-a-javascript-function-named-in-a-variable
+    //             var tmp_function = window["controls"]; 
+    //             tmp_function[method_name]();
 
-                // last_active_mode = tmp_function;
+    //             // last_active_mode = tmp_function;
                 
-            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
-                lastAutoRestDelay = lastAutoRestDelayShort;
+    //         } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+    //             lastAutoRestDelay = lastAutoRestDelayShort;
 
-                // Switched this to reset serial ports to help try and prevent a buffer issue
-                // filling up or something... this will hopefully prevent some potential
-                // arduino crashes or glitches
+    //             // Switched this to reset serial ports to help try and prevent a buffer issue
+    //             // filling up or something... this will hopefully prevent some potential
+    //             // arduino crashes or glitches
 
-                // TODO: write this to the dom
-                // controls.stop();
+    //             // TODO: write this to the dom
+    //             // controls.stop();
 
-                console.log('reset serial');
-                controls.reset_serial_ports();
-            }
-        }
-    } else {
+    //             console.log('reset serial');
+    //             controls.reset_serial_ports();
+    //         }
+    //     }
+    // } else {
 
-        // the auto pause for not random selection of installation
-        if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
-            lastAutoRest = millis();
+    //     // the auto pause for not random selection of installation
+    //     if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
+    //         lastAutoRest = millis();
 
-            if(lastAutoRestDelay == lastAutoRestDelayShort){
-                lastAutoRestDelay = lastAutoRestDelayLong;
+    //         if(lastAutoRestDelay == lastAutoRestDelayShort){
+    //             lastAutoRestDelay = lastAutoRestDelayLong;
 
-                var tmp_function = window["controls"]; 
-                tmp_function[last_active_mode]();
+    //             var tmp_function = window["controls"]; 
+    //             tmp_function[last_active_mode]();
                 
-            } else if(lastAutoRestDelay == lastAutoRestDelayLong){
-                lastAutoRestDelay = lastAutoRestDelayShort;
+    //         } else if(lastAutoRestDelay == lastAutoRestDelayLong){
+    //             lastAutoRestDelay = lastAutoRestDelayShort;
 
-                console.log('reset serial');
-                controls.reset_serial_ports();
-            }
-        }
+    //             console.log('reset serial');
+    //             controls.reset_serial_ports();
+    //         }
+    //     }
 
 
-    }
+    // }
 
 }
 
 function loadPubNubConfig(str) {
-    // console.log(arguments);
     pubnub_config = str;
     initPubNub();
     pubnubDataLogging();
@@ -248,11 +269,13 @@ function pubnubDataLogging(){
 
 
 function Control() {
-    var publishConfig = {
+    this.publishConfig = {
         channel : "habitual_instinct_control",
     };
 
-    this.randomize = false;
+    console.log("this.publishConfig: " + this.publishConfig);
+
+    this.randomize = true;
     this.randomize_timer = lastAutoRestDelayLong;
     this.pause_timer = lastAutoRestDelayShort;
 
@@ -260,7 +283,7 @@ function Control() {
 
     this.reset_serial_ports = (function(){
         console.log("reset_serial_ports");
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_serial_ports"
         };
 
@@ -271,7 +294,7 @@ function Control() {
         console.log("start");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "start"
         };
 
@@ -281,7 +304,7 @@ function Control() {
     this.stop = function(){
         console.log("stop");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "stop"
         };
 
@@ -292,7 +315,7 @@ function Control() {
         console.log("sweep");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep"
         };
 
@@ -303,7 +326,7 @@ function Control() {
         console.log("sweep_react");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react"
         };
 
@@ -314,7 +337,7 @@ function Control() {
         console.log("sweep_react_pause");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react_pause"
         };
 
@@ -325,7 +348,7 @@ function Control() {
         console.log("noise");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise"
         };
 
@@ -335,7 +358,7 @@ function Control() {
     this.noise_react = function(){
         console.log("noise_react");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise_react"
         };
 
@@ -346,7 +369,7 @@ function Control() {
         console.log("pattern_wave_small_v2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "pattern_wave_small_v2"
         };
 
@@ -357,7 +380,7 @@ function Control() {
         console.log("measure");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure"
         };
 
@@ -367,7 +390,7 @@ function Control() {
     this.measure_react = function(){
         console.log("measure_react");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure_react"
         };
 
@@ -377,7 +400,7 @@ function Control() {
     this.reset = function(){
         console.log("reset");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset"
         };
 
@@ -387,7 +410,7 @@ function Control() {
     this.reset_with_pause = function(){
         console.log("reset_with_pause");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_with_pause"
         };
 
@@ -402,7 +425,7 @@ function Control() {
     this.start__f0 = function(){
         console.log("start__f0");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "start__f0"
         };
 
@@ -412,7 +435,7 @@ function Control() {
     this.stop__f0 = function(){
         console.log("stop__f0");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "stop__f0"
         };
 
@@ -422,7 +445,7 @@ function Control() {
     this.sweep__f0 = function(){
         console.log("sweep__f0");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep__f0"
         };
 
@@ -433,7 +456,7 @@ function Control() {
         console.log("sweep_react__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react__f0"
         };
 
@@ -444,7 +467,7 @@ function Control() {
         console.log("sweep_react_pause__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react_pause__f0"
         };
 
@@ -455,7 +478,7 @@ function Control() {
         console.log("noise__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise__f0"
         };
 
@@ -466,7 +489,7 @@ function Control() {
         console.log("noise_react__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise_react__f0"
         };
 
@@ -477,7 +500,7 @@ function Control() {
         console.log("pattern_wave_small_v2__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "pattern_wave_small_v2__f0"
         };
 
@@ -488,7 +511,7 @@ function Control() {
         console.log("measure__f0");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure__f0"
         };
 
@@ -499,7 +522,7 @@ function Control() {
         console.log("measure_react");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure_react__f0"
         };
 
@@ -510,7 +533,7 @@ function Control() {
         console.log("reset");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset__f0"
         };
 
@@ -521,7 +544,7 @@ function Control() {
         console.log("reset_with_pause");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_with_pause__f0"
         };
 
@@ -534,7 +557,7 @@ function Control() {
     this.start__f1 = function(){
         console.log("start__f1");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "start__f1"
         };
 
@@ -544,7 +567,7 @@ function Control() {
     this.stop__f1 = function(){
         console.log("stop__f1");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "stop__f1"
         };
 
@@ -555,7 +578,7 @@ function Control() {
         console.log("sweep__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep__f1"
         };
 
@@ -566,7 +589,7 @@ function Control() {
         console.log("sweep_react__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react__f1"
         };
 
@@ -577,7 +600,7 @@ function Control() {
         console.log("sweep_react_pause__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react_pause__f1"
         };
 
@@ -588,7 +611,7 @@ function Control() {
         console.log("noise__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise__f1"
         };
 
@@ -599,7 +622,7 @@ function Control() {
         console.log("noise_react__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise_react__f1"
         };
 
@@ -610,7 +633,7 @@ function Control() {
         console.log("pattern_wave_small_v2__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "pattern_wave_small_v2__f1"
         };
 
@@ -621,7 +644,7 @@ function Control() {
         console.log("measure__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure__f1"
         };
 
@@ -632,7 +655,7 @@ function Control() {
         console.log("measure_react__f1");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure_react__f1"
         };
 
@@ -643,7 +666,7 @@ function Control() {
         console.log("reset");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset__f1"
         };
 
@@ -654,7 +677,7 @@ function Control() {
         console.log("reset_with_pause");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_with_pause__f1"
         };
 
@@ -667,7 +690,7 @@ function Control() {
     this.start__f2 = function(){
         console.log("start__f2");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "start__f2"
         };
 
@@ -677,7 +700,7 @@ function Control() {
     this.stop__f2 = function(){
         console.log("stop__f2");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "stop__f2"
         };
 
@@ -688,7 +711,7 @@ function Control() {
         console.log("sweep__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep__f2"
         };
 
@@ -699,7 +722,7 @@ function Control() {
         console.log("sweep_react__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react__f2"
         };
 
@@ -710,7 +733,7 @@ function Control() {
         console.log("sweep_react_pause__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react_pause__f2"
         };
 
@@ -721,7 +744,7 @@ function Control() {
         console.log("noise__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise__f2"
         };
 
@@ -732,7 +755,7 @@ function Control() {
         console.log("noise_react__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise_react__f2"
         };
 
@@ -743,7 +766,7 @@ function Control() {
         console.log("pattern_wave_small_v2__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "pattern_wave_small_v2__f2"
         };
 
@@ -754,7 +777,7 @@ function Control() {
         console.log("measure__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure__f2"
         };
 
@@ -765,7 +788,7 @@ function Control() {
         console.log("measure_react__f2");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure_react__f2"
         };
 
@@ -776,7 +799,7 @@ function Control() {
         console.log("reset");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset__f2"
         };
 
@@ -787,7 +810,7 @@ function Control() {
         console.log("reset_with_pause");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_with_pause__f2"
         };
 
@@ -800,7 +823,7 @@ function Control() {
     this.start__f3 = function(){
         console.log("start__f3");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "start__f3"
         };
 
@@ -810,7 +833,7 @@ function Control() {
     this.stop__f3 = function(){
         console.log("stop__f3");
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "stop__f3"
         };
 
@@ -821,7 +844,7 @@ function Control() {
         console.log("sweep__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep__f3"
         };
 
@@ -832,7 +855,7 @@ function Control() {
         console.log("sweep_react__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react__f3"
         };
 
@@ -843,7 +866,7 @@ function Control() {
         console.log("sweep_react_pause__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "sweep_react_pause__f3"
         };
 
@@ -854,7 +877,7 @@ function Control() {
         console.log("noise__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise__f3"
         };
 
@@ -865,7 +888,7 @@ function Control() {
         console.log("noise_react__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "noise_react__f3"
         };
 
@@ -876,7 +899,7 @@ function Control() {
         console.log("pattern_wave_small_v2__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "pattern_wave_small_v2__f3"
         };
 
@@ -887,7 +910,7 @@ function Control() {
         console.log("measure__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure__f3"
         };
 
@@ -898,7 +921,7 @@ function Control() {
         console.log("measure_react__f3");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "measure_react__f3"
         };
 
@@ -909,7 +932,7 @@ function Control() {
         console.log("reset");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset__f3"
         };
 
@@ -920,7 +943,7 @@ function Control() {
         console.log("reset_with_pause");
         
 
-        publishConfig.message = {
+        this.publishConfig.message = {
             message : "reset_with_pause__f3"
         };
 
@@ -932,7 +955,7 @@ function Control() {
         console.log("remember to put the publish back into the app");
 
         // this sets the last / previous mode that was selected
-        var tmp_msg = publishConfig.message.message;
+        var tmp_msg = this.publishConfig.message.message;
         if(tmp_msg != 'reset_with_pause' 
             && tmp_msg != 'reset' 
             && tmp_msg != 'measure'
@@ -940,11 +963,11 @@ function Control() {
             && tmp_msg != 'measure_react'
             && tmp_msg != 'reset_serial_ports'){
          
-                last_active_mode = publishConfig.message.message;
+                last_active_mode = this.publishConfig.message.message;
                 console.log(">>>> " + last_active_mode);
         }
 
-        pubnub.publish(publishConfig, function(status, response) {
+        pubnub.publish(this.publishConfig, function(status, response) {
             console.log(status, response);
         });
     }
