@@ -215,6 +215,7 @@ var global_timer = setInterval(function() {
                 console.log("method_name: ", method_name);
 
                 globalControl(method_name);
+                publishMode(method_name);
 
                 last_active_mode = method_name;
 
@@ -247,6 +248,7 @@ var global_timer = setInterval(function() {
                 // var tmp_function = window["controls"]; 
                 // tmp_function[last_active_mode]();
                 globalControl(last_active_mode);
+                method_name(last_active_mode);
                 
             } else if(lastAutoRestDelay == lastAutoRestDelayLong){
                 lastAutoRestDelay = lastAutoRestDelayShort;
@@ -300,6 +302,8 @@ function closeAllPorts(){
 
 
 function resetSerialPorts(){
+
+    publishMode("stop");
     
     stopPromise = new Promise((resolve, reject) => { 
         globalControl('stop');
@@ -350,6 +354,7 @@ function initPubNub(){
     pubnub.addListener({
         
         message: function(m) {
+
             // handle message
             var channelName = m.channel; // The channel for which the message belongs
             var channelGroup = m.subscription; // The channel group or wildcard subscription match (if exists)
@@ -357,44 +362,52 @@ function initPubNub(){
             var msg = m.message; // The Payload
             var msg_str = msg.message;
 
-            // console.log("msg_str: " + msg_str);
+            console.log("msg_str: " + msg_str);
             // console.log("Random timer index: ", msg_str.indexOf("control_randomize_timer"));
 
-            if(msg_str == "reset_serial_ports"){
-                // console.log('reset_serial_ports');
-                resetSerialPorts();
+            if(typeof msg_str !== "undefined"){
 
-            } else if(msg_str.indexOf("control_randomize_toggle_") >= 0){
-                // add randomize logic
-                var tmp_val = msg_str.lastIndexOf("_");
-                tmp_val = msg_str.substring(tmp_val + 1);
+                if(msg_str == "reset_serial_ports"){
+                    // console.log('reset_serial_ports');
+                    resetSerialPorts();
 
-                // console.log("CURRENT VALUE: ", tmp_val);
+                } else if(msg_str.indexOf("control_randomize_toggle_") >= 0){
+                    // add randomize logic
+                    var tmp_val = msg_str.lastIndexOf("_");
+                    tmp_val = msg_str.substring(tmp_val + 1);
 
-                random_mode = tmp_val;
-            } else if(msg_str.indexOf("control_randomize_timer") >= 0){
-                var tmp_val = msg_str.lastIndexOf("_");
-                tmp_val = msg_str.substring(tmp_val + 1);
+                    // console.log("CURRENT VALUE: ", tmp_val);
 
-                // console.log("tmp_val", tmp_val);
+                    random_mode = tmp_val;
+                } else if(msg_str.indexOf("control_randomize_timer") >= 0){
+                    var tmp_val = msg_str.lastIndexOf("_");
+                    tmp_val = msg_str.substring(tmp_val + 1);
 
-                lastAutoRestDelayLong = tmp_val;
+                    // console.log("tmp_val", tmp_val);
 
-            } else if(msg_str.indexOf("control_pause_timer") >= 0){
-                var tmp_val = msg_str.lastIndexOf("_");
-                tmp_val = msg_str.substring(tmp_val + 1);
+                    lastAutoRestDelayLong = tmp_val;
 
-                lastAutoRestDelayShort = tmp_val;
-                lastAutoRestDelay = lastAutoRestDelayShort;
+                } else if(msg_str.indexOf("control_pause_timer") >= 0){
+                    var tmp_val = msg_str.lastIndexOf("_");
+                    tmp_val = msg_str.substring(tmp_val + 1);
 
-            
-            } else if(msg_str.indexOf("__") == -1){
-                // this means that it is a global control
-                // global control
-                globalControl(msg_str);
-            }else {
-                // console.log("get here?");
-                panelControl(msg_str);
+                    lastAutoRestDelayShort = tmp_val;
+                    lastAutoRestDelay = lastAutoRestDelayShort;
+
+                
+                } else if(msg_str.indexOf("__") == -1){
+                    // this means that it is a global control
+                    // global control
+                    globalControl(msg_str);
+                }else {
+                    // console.log("get here?");
+                    panelControl(msg_str);
+                }
+            } else {
+                console.log("UNDEFINED!!!!!!");
+                console.log(m);
+                console.log("||||||||||||||");
+
             }
         },
         presence: function(p) {
@@ -417,6 +430,26 @@ function initPubNub(){
         channels: ['habitual_instinct_control'],
         withPresence: true // also subscribe to presence instances.
     });
+}
+
+function publishMode(data){
+
+    pubnub.publish({
+        message: data.trim(),
+        channel: 'habitual_instinct_control',
+        sendByPost: false, // true to send via post
+        storeInHistory: true, //override default storage options
+        meta: {
+            // publish extra meta with the request
+            // "cool": "meta"
+        }
+    },
+    function (status, response) {
+        // handle status, response
+        console.log("response log: ", arguments);
+    });
+
+
 }
 
 function initPubNubInstallation(){

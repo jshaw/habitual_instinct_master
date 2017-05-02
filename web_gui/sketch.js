@@ -160,63 +160,9 @@ function draw() {
     data_logging = controls.data_logging;
 
     current_millis = millis();
+    
     // would be useful to display on the screen what mode is actually active
-
-    // if(random_mode ==  true){
-
-    //     if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
-    //         lastAutoRest = millis();
-
-    //         if(lastAutoRestDelay == lastAutoRestDelayShort){
-
-    //             lastAutoRestDelay = lastAutoRestDelayLong;
-    //             var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
-                
-    //             // TODO: write this to the dom
-    //             console.log("method_name: ", method_name);
-
-    //             // http://stackoverflow.com/questions/1723287/calling-a-javascript-function-named-in-a-variable
-    //             var tmp_function = window["controls"]; 
-    //             tmp_function[method_name]();
-
-    //             // last_active_mode = tmp_function;
-                
-    //         } else if(lastAutoRestDelay == lastAutoRestDelayLong){
-    //             lastAutoRestDelay = lastAutoRestDelayShort;
-
-    //             // Switched this to reset serial ports to help try and prevent a buffer issue
-    //             // filling up or something... this will hopefully prevent some potential
-    //             // arduino crashes or glitches
-
-    //             // TODO: write this to the dom
-    //             // controls.stop();
-
-    //             console.log('reset serial');
-    //             controls.reset_serial_ports();
-    //         }
-    //     }
-    // } else {
-
-    //     // the auto pause for not random selection of installation
-    //     if ((current_millis - lastAutoRest) > lastAutoRestDelay) {
-    //         lastAutoRest = millis();
-
-    //         if(lastAutoRestDelay == lastAutoRestDelayShort){
-    //             lastAutoRestDelay = lastAutoRestDelayLong;
-
-    //             var tmp_function = window["controls"]; 
-    //             tmp_function[last_active_mode]();
-                
-    //         } else if(lastAutoRestDelay == lastAutoRestDelayLong){
-    //             lastAutoRestDelay = lastAutoRestDelayShort;
-
-    //             console.log('reset serial');
-    //             controls.reset_serial_ports();
-    //         }
-    //     }
-
-
-    // }
+    // Also to post the last time data was received from serial ports
 
 }
 
@@ -224,6 +170,7 @@ function loadPubNubConfig(str) {
     pubnub_config = str;
     initPubNub();
     pubnubDataLogging();
+    pubnubModeLogging();
 }
 
 function initPubNub(){
@@ -265,6 +212,48 @@ function pubnubDataLogging(){
         channels: ['habitual_instinct_app'] 
 
     });
+}
+
+function pubnubModeLogging(){
+       
+    pubnub.addListener({
+        status: function(statusEvent) {
+            if (statusEvent.category === "PNConnectedCategory") {
+                // publishSampleMessage();
+            }
+        },
+        message: function(message) {
+            // if(data_logging == true){
+                console.log("Mode! : ", message);
+                var mode = message.message;
+                outputMode(mode);
+            // }
+        },
+        presence: function(presenceEvent) {
+            // handle presence
+        }
+    })      
+    
+    pubnub.subscribe({
+        channels: ['habitual_instinct_control'] 
+    });
+}
+
+var mode_display = "";
+function outputMode(mode){
+    background(255);
+
+    console.log(typeof mode);
+    console.log(typeof mode.message);
+
+    if(typeof mode == 'string'){
+        mode_display = "mode: " + mode;
+    } else {
+        mode_display = "mode: " + mode.message;
+    }
+    textSize(32);
+    text(mode_display, 10, 30);
+
 }
 
 
