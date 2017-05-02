@@ -156,14 +156,6 @@ function initPorts(){
 // this way there's two listenier for incomming data and ougoing control of the arduinos / microcontrolers
 function initPortUpdates(){
 
-
-    // this makes sure that something happens when we boot up.
-    if(startUpSequence == true){
-        var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
-        globalControl(method_name);
-        startUpSequence = false;
-    }
-
     _.forEach(ports, function(value, key){
         ports[key].on('data', function (data) {
             // it is here that the data will be sent from 
@@ -185,6 +177,17 @@ function initPortUpdates(){
             resetSerialPorts();
         });
     });
+
+    // this makes sure that something happens when we boot up.
+    if(startUpSequence == true){
+        var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+        console.log("method_name: " + method_name);
+        globalControl(method_name);
+        startUpSequence = false;
+
+
+        console.log("startUpSequence: " + startUpSequence);
+    }
 }
 
 var current_timer = 0;
