@@ -249,18 +249,12 @@ var mode_display = "";
 function outputMode(mode){
     background(255);
 
-
-    console.log("0");
-
     console.log(typeof mode);
     console.log(typeof mode.message);
 
     if(typeof mode == 'string'){
 
-        console.log("1");
-
         if(mode.indexOf("time_") != -1){
-            console.log("2");
             // namespace_current_time_last_message_from_panel_0/last_message_from_panel_1/last_message_from_panel_2
             var re = /time_/gi;
             var newstr = mode.replace(re, "");

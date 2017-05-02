@@ -88,9 +88,11 @@ jsonfile.readFile(file, function(err, obj) {
 
 });
 
+
+var startUpSequence = true;
+
 function initApp(){
     listPorts();
-    startModeTimer();
 }
 
 function listPorts(){
@@ -151,6 +153,14 @@ function initPorts(){
 // this way there's two listenier for incomming data and ougoing control of the arduinos / microcontrolers
 function initPortUpdates(){
 
+
+    // this makes sure that something happens when we boot up.
+    if(startUpSequence == true){
+        var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+        globalControl(method_name);
+        startUpSequence = false;
+    }
+
     _.forEach(ports, function(value, key){
         ports[key].on('data', function (data) {
             // it is here that the data will be sent from 
@@ -163,8 +173,6 @@ function initPortUpdates(){
             console.log(arguments);
             console.log('Error: ', err.message);
             console.log('Error: ', err.message);
-
-            process.exit();
 
             // would be good, that if there's an error, it auto closes all of the ports,
             // then restarts them
@@ -179,11 +187,6 @@ function initPortUpdates(){
 var current_timer = 0;
 var random_mode = true;
 var lastAutoRest = 0;
-
-function startModeTimer(){
-
-}
-
 
 var global_timer = setInterval(function() {
     current_timer += 33;
@@ -263,6 +266,13 @@ var global_timer = setInterval(function() {
             }
 
         }
+    }
+
+    // 480000 = 8 minutes
+    var average_3_panel_timers = (last_message_p0 + last_message_p1 + last_message_p2);
+    if( (current_timer - ( average_3_panel_timers / 3) ) > 480000){
+        // only exit if the average time of not working is 8 minutes
+        process.exit();
     }
 
 }, 33);
