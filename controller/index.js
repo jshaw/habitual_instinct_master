@@ -106,7 +106,7 @@ function listPorts(){
     // TODO: Put Back In!
     // When not writing tests without arduinos connected to computer
     // ==================
-    // initPorts();
+    initPorts();
 
 }
 
@@ -409,9 +409,9 @@ function initPubNub(){
                     panelControl(msg_str);
                 }
             } else {
-                console.log("UNDEFINED!!!!!!");
-                console.log(m);
-                console.log("||||||||||||||");
+                // console.log("UNDEFINED!!!!!!");
+                // console.log(m);
+                // console.log("||||||||||||||");
 
                 // this is here for debugging
                 // publishLastReceivedData();
