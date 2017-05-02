@@ -100,15 +100,11 @@ function initApp(){
 
 function listPorts(){
     SerialPort.list(function (err, ports) {
-        ports.forEach(function(port, i) {
+        ports.forEach(function(port) {
             console.log(port.comName);
             console.log(port.pnpId);
             console.log(port.manufacturer);
-            console.log(i);
             console.log("=====");
-            if(i >= 2){
-                startBootScan();
-            }
         });
     });
 
@@ -126,8 +122,6 @@ function startBootScan(){
         console.log("method_name: " + method_name);
         globalControl(method_name);
         startUpSequence = false;
-
-
         console.log("startUpSequence: " + startUpSequence);
     }
 
@@ -205,6 +199,10 @@ var lastAutoRest = 0;
 
 var global_timer = setInterval(function() {
     current_timer += 33;
+
+    if(current_timer > 1500 && current_timer < 2000){
+        startBootScan();
+    }
 
     // console.log("lastAutoRestDelay: ", lastAutoRestDelay);
     // console.log("lastAutoRestDelayShort: ", lastAutoRestDelayShort);
