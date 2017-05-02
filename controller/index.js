@@ -100,11 +100,15 @@ function initApp(){
 
 function listPorts(){
     SerialPort.list(function (err, ports) {
-        ports.forEach(function(port) {
+        ports.forEach(function(port, i) {
             console.log(port.comName);
             console.log(port.pnpId);
             console.log(port.manufacturer);
+            console.log(i);
             console.log("=====");
+            if(i >= 2){
+                startBootScan();
+            }
         });
     });
 
@@ -114,6 +118,22 @@ function listPorts(){
     initPorts();
 
 }
+
+function startBootScan(){
+        // this makes sure that something happens when we boot up.
+    if(startUpSequence == true){
+        var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
+        console.log("method_name: " + method_name);
+        globalControl(method_name);
+        startUpSequence = false;
+
+
+        console.log("startUpSequence: " + startUpSequence);
+    }
+
+}
+
+
 
 // ToDO, get actual port names for the arduinos that are going to be used
 // when plugged into port
@@ -177,17 +197,6 @@ function initPortUpdates(){
             resetSerialPorts();
         });
     });
-
-    // this makes sure that something happens when we boot up.
-    if(startUpSequence == true){
-        var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
-        console.log("method_name: " + method_name);
-        globalControl(method_name);
-        startUpSequence = false;
-
-
-        console.log("startUpSequence: " + startUpSequence);
-    }
 }
 
 var current_timer = 0;
