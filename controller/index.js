@@ -4,9 +4,9 @@ var PubNub = require('pubnub');
 var pubnub;
 var pubnub_installation;
 
-var jsonfile = require('jsonfile')
-var file = './../pubnub_config.json';
-var json
+var jsonfile = require('jsonfile');
+var file = "./../pubnub_config.json";
+var json;
 
 var control_val;
 
