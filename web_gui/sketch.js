@@ -34,6 +34,12 @@ var function_control_list = [
 //     'noise_react', 
 //     'pattern_wave_small_v2'];
 
+
+var current_timer = "";
+var last_panel_0 = "";
+var last_panel_1 = "";
+var last_panel_2 = "";
+
 function preload() {
 
     loadStrings('../pubnub_config.txt', loadPubNubConfig);
@@ -243,17 +249,41 @@ var mode_display = "";
 function outputMode(mode){
     background(255);
 
+
+    console.log("0");
+
     console.log(typeof mode);
     console.log(typeof mode.message);
 
     if(typeof mode == 'string'){
-        mode_display = "mode: " + mode;
+
+        console.log("1");
+
+        if(mode.indexOf("time_") != -1){
+            console.log("2");
+            // namespace_current_time_last_message_from_panel_0/last_message_from_panel_1/last_message_from_panel_2
+            var re = /time_/gi;
+            var newstr = mode.replace(re, "");
+            var arrayOfTimes = newstr.split("/");
+            current_timer = "Current Timer: " + arrayOfTimes[0];
+            last_panel_0 = "Last Panel 0: " + arrayOfTimes[1];
+            last_panel_1 = "Last Panel 1: " + arrayOfTimes[2];
+            last_panel_2 = "Last Panel 2: " + arrayOfTimes[3];
+
+        } else {
+            mode_display = "mode: " + mode;
+        }
+        
     } else {
         mode_display = "mode: " + mode.message;
     }
+
     textSize(32);
     text(mode_display, 10, 30);
-
+    text(current_timer, 10, 60);
+    text(last_panel_0, 10, 90);
+    text(last_panel_1, 10, 120);
+    text(last_panel_2, 10, 150);
 }
 
 

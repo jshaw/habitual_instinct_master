@@ -60,6 +60,11 @@ var randomize_function_list = [
     'noise_react', 
     'pattern_wave_small_v2'];
 
+
+var last_message_p0 = 0;
+var last_message_p1 = 0;
+var last_message_p2 = 0;
+
 jsonfile.readFile(file, function(err, obj) {
     console.dir(obj);
     json = obj;
@@ -408,6 +413,9 @@ function initPubNub(){
                 console.log(m);
                 console.log("||||||||||||||");
 
+                // this is here for debugging
+                // publishLastReceivedData();
+
             }
         },
         presence: function(p) {
@@ -491,6 +499,21 @@ function publishInstallationData(data){
 
     if ( (control_val != "stop") && (data.trim().length > 20)){
 
+        var panel_id_data = data.charAt(0);
+
+        // typecast to int
+        panel_id_data *= 1;
+
+        if(panel_id_data == 0){
+            last_message_p0 = current_timer;
+        } else if(panel_id_data == 1){
+            last_message_p1 = current_timer;
+        } else if (panel_id_data == 2){
+            last_message_p2 = current_timer;
+        }
+
+        publishLastReceivedData();
+
         pubnub_installation.publish({
             message: data.trim(),
             channel: 'habitual_instinct_app',
@@ -510,6 +533,12 @@ function publishInstallationData(data){
 
     }
 
+}
+
+function publishLastReceivedData(){
+    // namespace_current_time_last_message_from_panel_0/last_message_from_panel_1/last_message_from_panel_2
+    var timecodes = "time_" + current_timer + "/" + last_message_p0 + "/" + last_message_p1 + "/" + last_message_p2; 
+    publishMode(timecodes);
 }
 
 function globalControl(msg){
