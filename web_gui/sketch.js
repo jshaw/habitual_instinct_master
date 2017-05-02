@@ -271,11 +271,16 @@ function outputMode(mode){
             last_panel_2 = "Last Panel 2: " + arrayOfTimes[3];
 
         } else {
-            mode_display = "mode: " + mode;
+            if(mode.indexOf("control_") != 0){
+                mode_display = "mode: " + mode;
+            }
         }
         
     } else {
-        mode_display = "mode: " + mode.message;
+        var tmp_md = mode.message;
+        if(tmp_md.indexOf("control_") != 0){
+            mode_display = "mode: " + tmp_md;
+        }
     }
 
     textSize(32);
