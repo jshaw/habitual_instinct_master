@@ -281,9 +281,8 @@ var global_timer = setInterval(function() {
         }
     }
 
-    // 480000 = 8 minutes
-    var average_3_panel_timers = (last_message_p0 + last_message_p1 + last_message_p2);
-    if( (current_timer - ( average_3_panel_timers / 3) ) > 480000){
+    // every 20 minutes reboot
+    if( current_timer > 1200000){
         // only exit if the average time of not working is 8 minutes
         process.exit();
     }
