@@ -164,7 +164,7 @@ function initPortUpdates(){
             console.log('Error: ', err.message);
             console.log('Error: ', err.message);
 
-            // process.exit();
+            process.exit();
 
             // would be good, that if there's an error, it auto closes all of the ports,
             // then restarts them
