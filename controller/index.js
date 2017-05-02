@@ -69,17 +69,20 @@ jsonfile.readFile(file, function(err, obj) {
     console.dir(obj);
     json = obj;
 
+    var json_web_control = json.web_control;
+    var json_installation = json.installation;
+
     pubnub = new PubNub({
-        subscribeKey: json.web_control.subKey,
-        publishKey: json.web_control.pubKey,
-        secretKey: json.web_control.secretKey,
+        subscribeKey: json_web_control.subKey,
+        publishKey: json_web_control.pubKey,
+        secretKey: json_web_control.secretKey,
         ssl: true
     });
 
     pubnub_installation = new PubNub({
-        subscribeKey: json.installation.subKey,
-        publishKey: json.installation.pubKey,
-        secretKey: json.installation.secretKey,
+        subscribeKey: json_installation.subKey,
+        publishKey: json_installation.pubKey,
+        secretKey: json_installation.secretKey,
         ssl: true
     });
 
