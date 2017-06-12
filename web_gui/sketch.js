@@ -259,10 +259,16 @@ function outputMode(mode){
             var re = /time_/gi;
             var newstr = mode.replace(re, "");
             var arrayOfTimes = newstr.split("/");
-            current_timer = "Current Timer: " + arrayOfTimes[0];
-            last_panel_0 = "Last Panel 0: " + arrayOfTimes[1];
-            last_panel_1 = "Last Panel 1: " + arrayOfTimes[2];
-            last_panel_2 = "Last Panel 2: " + arrayOfTimes[3];
+            var current_millis_timer = arrayOfTimes[0];
+            // current_timer = "Current Timer: " + arrayOfTimes[0];
+            // last_panel_0 = "Last Panel 0: " + arrayOfTimes[1];
+            // last_panel_1 = "Last Panel 1: " + arrayOfTimes[2];
+            // last_panel_2 = "Last Panel 2: " + arrayOfTimes[3];
+
+            current_timer = "Current Timer: " + millisToMinutesAndSeconds(current_millis_timer);
+            last_panel_0 = "Last Panel 0: " + TimerDiff(current_millis_timer, arrayOfTimes[1]);
+            last_panel_1 = "Last Panel 1: " + TimerDiff(current_millis_timer, arrayOfTimes[2]);
+            last_panel_2 = "Last Panel 2: " + TimerDiff(current_millis_timer, arrayOfTimes[3]);
 
         } else {
             if(mode.indexOf("control_") != 0){
@@ -283,6 +289,21 @@ function outputMode(mode){
     text(last_panel_0, 10, 90);
     text(last_panel_1, 10, 120);
     text(last_panel_2, 10, 150);
+}
+
+
+function TimerDiff(ct, pt) {
+    var ms_diff = pt - ct;
+    var sec_diff = millisToMinutesAndSeconds(ms_diff);
+
+    return sec_diff;
+
+}
+
+function millisToMinutesAndSeconds(millis) {
+    var minutes = Math.floor(millis / 60000);
+    var seconds = ((millis % 60000) / 1000).toFixed(0);
+    return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
 }
 
 
