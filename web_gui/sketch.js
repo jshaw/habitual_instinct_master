@@ -99,6 +99,10 @@ function setup() {
     f.add(controls, 'data_logging');
     f.add(controls, 'reset_serial_ports');
 
+    f.add(controls, '________________');
+    f.add(controls, '__kill_process__');
+    f.add(controls, '________________');
+
     var f0 = gui.addFolder("Global");
     var f1 = gui.addFolder("Arduino One");
     var f2 = gui.addFolder("Arduino Two");
@@ -327,6 +331,19 @@ function Control() {
         };
 
         this.publish();
+    });
+
+    this.__kill_process__ = (function(){
+        console.log("kill_process");
+        this.publishConfig.message = {
+            message : "kill_process"
+        };
+
+        this.publish();
+    });
+
+    this.________________ = (function(){
+        console.log("empty_space to make sure nothing accidently kills the app");
     });
 
     this.start = function(){

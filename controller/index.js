@@ -114,7 +114,7 @@ function listPorts(){
     // TODO: Put Back In!
     // When not writing tests without arduinos connected to computer
     // ==================
-    initPorts();
+    // initPorts();
 
 }
 
@@ -122,7 +122,8 @@ function startBootScan(){
         // this makes sure that something happens when we boot up.
     if(startUpSequence == true){
         var method_name = randomize_function_list[Math.floor(Math.random() * randomize_function_list.length)];
-        console.log("method_name: " + method_name);
+        console.log("1 method_name: " + method_name);
+        publishMode(method_name);
         globalControl(method_name);
         startUpSequence = false;
         console.log("startUpSequence: " + startUpSequence);
@@ -396,8 +397,12 @@ function initPubNub(){
             // console.log("Random timer index: ", msg_str.indexOf("control_randomize_timer"));
 
             if(typeof msg_str !== "undefined"){
+                
+                if(msg_str == "kill_process"){
+                    // console.log('kill_process');
+                    process.exit();
 
-                if(msg_str == "reset_serial_ports"){
+                } else if(msg_str == "reset_serial_ports"){
                     // console.log('reset_serial_ports');
                     resetSerialPorts();
 
