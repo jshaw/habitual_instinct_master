@@ -58,7 +58,10 @@ var randomize_function_list = [
     'sweep_react_pause', 
     'noise', 
     'noise_react', 
-    'pattern_wave_small_v2'];
+    'pattern_wave_small_v2'
+    // 'pattern_wave_small_v2_react'
+    // 'measure_react'
+    ];
 
 
 var last_message_p0 = 0;
@@ -425,6 +428,16 @@ function initPubNub(){
                 } else if(msg_str.indexOf("__") == -1){
                     // this means that it is a global control
                     // global control
+
+                    // this makes sure that the selected mode will also match with the timing logic.
+                    // ie if paused, and a movement mode is selected, make sure the next mode will 
+                    // be a pause / stop
+                    if(msg_str == "stop"){
+                        lastAutoRestDelay = lastAutoRestDelayShort;    
+                    } else {
+                        lastAutoRestDelay = lastAutoRestDelayLong;
+                    }
+                    
                     globalControl(msg_str);
                 }else {
                     // console.log("get here?");
