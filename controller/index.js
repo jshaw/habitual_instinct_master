@@ -530,7 +530,7 @@ function initPubNubInstallation(){
     });
 
     pubnub_installation.subscribe({
-        channels: ['habitual_instinct_app'],
+        channels: ['hi_vector_2017'],
         withPresence: true // also subscribe to presence instances.
     });
 }
@@ -556,7 +556,7 @@ function publishInstallationData(data){
 
         pubnub_installation.publish({
             message: data.trim(),
-            channel: 'habitual_instinct_app',
+            channel: 'hi_vector_2017',
             sendByPost: false, // true to send via post
             storeInHistory: true, //override default storage options
             meta: {

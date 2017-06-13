@@ -219,7 +219,7 @@ function pubnubDataLogging(){
     })      
     
     pubnub_logging.subscribe({
-        channels: ['habitual_instinct_app'] 
+        channels: ['hi_vector_2017'] 
 
     });
 }
