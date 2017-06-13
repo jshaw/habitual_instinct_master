@@ -114,7 +114,7 @@ function listPorts(){
     // TODO: Put Back In!
     // When not writing tests without arduinos connected to computer
     // ==================
-    // initPorts();
+    initPorts();
 
 }
 
